@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [{ hostname: 'cdn.sanity.io' }],
+  },
+  transpilePackages: ['sanity', '@sanity/vision', '@sanity/ui', '@sanity/icons'],
+  async redirects() {
+    return [
+      { source: '/studio', destination: '/studio/structure', permanent: false },
+    ]
+  },
 };
 
 export default nextConfig;

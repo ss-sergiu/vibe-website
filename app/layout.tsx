@@ -6,16 +6,15 @@ import "./globals.css";
 // Plus Jakarta Sans - Sans-serif modern pentru TOATE titlurile (H1-H6)
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-heading",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  subsets: ["latin", "latin-ext"],
+  weight: ["600", "700", "800"],
   display: "swap",
 });
 
-// Inter - Sans-serif curat pentru body text
 const inter = Inter({
   variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "600", "700"],
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  weight: ["400", "600"],
   display: "swap",
 });
 
