@@ -1,15 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-const menuItems = [
+type MenuItem = { name: string; price: number; category: string; description: string; image: string; objectPosition?: string };
+
+const menuItems: MenuItem[] = [
   // Espresso
   { name: 'Espresso', price: 12, category: 'Espresso', description: 'Shot dublu de espresso intens', image: 'https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=400&auto=format&fit=crop' },
   { name: 'Americano', price: 14, category: 'Espresso', description: 'Espresso diluat cu apă caldă', image: 'https://images.unsplash.com/photo-1551030173-122aabc4489c?w=400&auto=format&fit=crop' },
   { name: 'Cappuccino', price: 16, category: 'Espresso', description: 'Espresso cu lapte spumat catifelat', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&auto=format&fit=crop' },
   { name: 'Flat White', price: 17, category: 'Espresso', description: 'Microfoam mătăsos peste espresso', image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?w=400&auto=format&fit=crop' },
   { name: 'Latte', price: 18, category: 'Espresso', description: 'Espresso cu lapte cald și foam ușor', image: 'https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=400&auto=format&fit=crop' },
-  { name: 'Cortado', price: 15, category: 'Espresso', description: 'Espresso tăiat cu lapte cald 1:1', image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?w=400&auto=format&fit=crop' },
+  { name: 'Cortado', price: 15, category: 'Espresso', description: 'Espresso tăiat cu lapte cald 1:1', image: 'https://images.unsplash.com/photo-1519532059956-a63a37af5deb?w=800&auto=format&fit=crop&q=90', objectPosition: 'center 30%' },
 
   // Specialty
   { name: 'Pourover V60', price: 22, category: 'Specialty', description: 'Extracție manuală, single origin Etiopia', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop' },
@@ -34,11 +36,71 @@ const categories = ['Espresso', 'Specialty', 'Cold Brew', 'Patiserie'];
 
 export default function Menu() {
   const [activeCategory, setActiveCategory] = useState('Espresso');
+  const [showSticky, setShowSticky] = useState(false);
+  const [navHeight, setNavHeight] = useState(64);
+  const sectionRef = useRef<HTMLElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const productsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const getNavH = () => document.getElementById('main-nav')?.offsetHeight ?? 64;
+
+    const update = () => {
+      const navH = getNavH();
+      setNavHeight(navH);
+      if (!tabsRef.current || !sectionRef.current) return;
+      const tabsRect = tabsRef.current.getBoundingClientRect();
+      const sectionRect = sectionRef.current.getBoundingClientRect();
+      setShowSticky(tabsRect.top < navH && sectionRect.bottom > 120);
+    };
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+
+  const handleCategoryClick = (category: string, fromSticky = false) => {
+    setActiveCategory(category);
+    if (fromSticky && productsRef.current) {
+      const top = productsRef.current.getBoundingClientRect().top + window.scrollY - 120;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  };
 
   const filtered = menuItems.filter(item => item.category === activeCategory);
 
+  const tabButtons = (small = false, fromSticky = false) => categories.map(category => (
+    <button
+      key={category}
+      onClick={() => handleCategoryClick(category, fromSticky)}
+      className={`rounded-full font-semibold transition-all duration-300 btn-glow ${
+        small ? 'px-4 py-1.5 text-sm border' : 'px-6 py-3 border-2'
+      } ${
+        activeCategory === category
+          ? 'bg-[#F5E6C8] text-[#1E1200] hover:scale-105'
+          : 'bg-transparent border-[#F5E6C8] text-[#F5E6C8] hover:scale-105'
+      }`}
+    >
+      {category}
+    </button>
+  ));
+
   return (
-    <section id="meniu" className="py-20 px-6 bg-[#1C0F07]">
+    <section id="meniu" ref={sectionRef} className="py-20 px-6 bg-[#1C0F07]">
+
+      {/* TAB-URI STICKY */}
+      <div style={{ top: navHeight }} className={`fixed left-0 right-0 z-40 bg-[#1C0F07]/95 backdrop-blur-md shadow-lg py-2 px-6 transition-all duration-300 ${
+        showSticky ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
+      }`}>
+        <div className="max-w-7xl mx-auto flex justify-center gap-3">
+          {tabButtons(true, true)}
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto">
 
         {/* TITLU */}
@@ -46,22 +108,12 @@ export default function Menu() {
           Meniu
         </h2>
 
-        {/* TAB-URI CATEGORII */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
-          {categories.map(category => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
-                activeCategory === category
-                  ? 'bg-[#F5E6C8] text-[#1E1200] hover:scale-105 btn-glow'
-                  : 'bg-transparent border-2 border-[#F5E6C8] text-[#F5E6C8] hover:scale-105 btn-glow'
-              }`}
-            >
-              {category}
-            </button>
-          ))}
+        {/* TAB-URI NORMALE */}
+        <div ref={tabsRef} className="flex flex-wrap justify-center gap-3 mb-10">
+          {tabButtons(false)}
         </div>
+
+        <div ref={productsRef} />
 
         {/* GRID PRODUSE */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -75,6 +127,7 @@ export default function Menu() {
                   src={item.image}
                   alt={item.name}
                   className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                  style={item.objectPosition ? { objectPosition: item.objectPosition } : undefined}
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
               </div>

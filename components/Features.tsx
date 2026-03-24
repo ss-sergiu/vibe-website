@@ -21,7 +21,7 @@ export default function Features() {
           <div className={`bg-[#F5E6C8] rounded-2xl overflow-hidden flex flex-col justify-between min-h-[320px] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,230,200,0.3)] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
             style={{ transitionDelay: '0ms' }}>
             <img
-              src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&auto=format&fit=crop"
+              src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1600&auto=format&fit=crop&q=90"
               alt="Cafea specialitate"
               className="w-full h-48 object-cover"
             />

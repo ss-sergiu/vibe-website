@@ -59,7 +59,7 @@ export default function HeroStarter() {
       </div>
 
       {/* SCROLL INDICATOR */}
-      <a href="#footer" className="hero-animate hero-delay-4 absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+      <a href="#features" className="hero-animate hero-delay-4 absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="36"
