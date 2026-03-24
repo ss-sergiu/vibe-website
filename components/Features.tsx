@@ -49,16 +49,16 @@ export default function Features() {
             <div className={`bg-[#F5E6C8] rounded-2xl overflow-hidden flex flex-col min-h-[150px] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,230,200,0.3)] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
               style={{ transitionDelay: '150ms' }}>
               <img
-                src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&auto=format&fit=crop"
-                alt="Bariști certificați"
+                src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=800&auto=format&fit=crop"
+                alt="Patiserie artizanală"
                 className="w-full h-40 object-cover"
               />
               <div className="p-6 flex flex-col flex-1 justify-between">
                 <h4 className="text-xl font-bold text-[#1E1200] mb-3">
-                  Bariști certificați
+                  Patiserie Artizanală
                 </h4>
                 <p className="text-[#3B2507]">
-                  Echipa noastră a absolvit cursuri SCA și participă la competiții naționale.
+                  Croissante, pain au chocolat și prăjituri preparate zilnic în bucătăria noastră, din ingrediente naturale.
                 </p>
               </div>
             </div>
@@ -67,7 +67,7 @@ export default function Features() {
             <div className={`bg-[#F5E6C8] rounded-2xl overflow-hidden flex flex-col min-h-[150px] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,230,200,0.3)] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
               style={{ transitionDelay: '300ms' }}>
               <img
-                src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=800&auto=format&fit=crop"
+                src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&auto=format&fit=crop"
                 alt="Ambient relaxant"
                 className="w-full h-40 object-cover"
               />

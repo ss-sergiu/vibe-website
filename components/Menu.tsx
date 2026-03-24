@@ -4,16 +4,16 @@ import { useState } from 'react';
 
 const menuItems = [
   // Espresso
-  { name: 'Espresso', price: 12, category: 'Espresso', description: 'Shot dublu intens, 36ml extract', image: 'https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=400&auto=format&fit=crop' },
-  { name: 'Americano', price: 14, category: 'Espresso', description: 'Espresso alungit cu apă fierbinte', image: 'https://images.unsplash.com/photo-1551030173-122aabc4489c?w=400&auto=format&fit=crop' },
+  { name: 'Espresso', price: 12, category: 'Espresso', description: 'Shot dublu de espresso intens', image: 'https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=400&auto=format&fit=crop' },
+  { name: 'Americano', price: 14, category: 'Espresso', description: 'Espresso diluat cu apă caldă', image: 'https://images.unsplash.com/photo-1551030173-122aabc4489c?w=400&auto=format&fit=crop' },
   { name: 'Cappuccino', price: 16, category: 'Espresso', description: 'Espresso cu lapte spumat catifelat', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&auto=format&fit=crop' },
-  { name: 'Flat White', price: 17, category: 'Espresso', description: 'Double ristretto cu microfoam fin', image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?w=400&auto=format&fit=crop' },
+  { name: 'Flat White', price: 17, category: 'Espresso', description: 'Microfoam mătăsos peste espresso', image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?w=400&auto=format&fit=crop' },
   { name: 'Latte', price: 18, category: 'Espresso', description: 'Espresso cu lapte cald și foam ușor', image: 'https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=400&auto=format&fit=crop' },
   { name: 'Cortado', price: 15, category: 'Espresso', description: 'Espresso tăiat cu lapte cald 1:1', image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?w=400&auto=format&fit=crop' },
 
   // Specialty
   { name: 'Pourover V60', price: 22, category: 'Specialty', description: 'Extracție manuală, single origin Etiopia', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop' },
-  { name: 'AeroPress', price: 20, category: 'Specialty', description: 'Corp plin, presiune controlată', image: 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=400&auto=format&fit=crop' },
+  { name: 'AeroPress', price: 20, category: 'Specialty', description: 'Corp plin, presiune controlată', image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&auto=format&fit=crop' },
   { name: 'Chemex', price: 24, category: 'Specialty', description: 'Filtru gros, claritate maximă în cană', image: 'https://images.unsplash.com/photo-1516743619420-154b70a65fea?w=400&auto=format&fit=crop' },
   { name: 'Batch Brew', price: 16, category: 'Specialty', description: 'Filter coffee proaspăt, rotit la 2h', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&auto=format&fit=crop' },
 
@@ -26,7 +26,7 @@ const menuItems = [
   // Patiserie
   { name: 'Croissant simplu', price: 12, category: 'Patiserie', description: 'Unt franțuzesc, crocant la exterior', image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&auto=format&fit=crop' },
   { name: 'Pain au chocolat', price: 14, category: 'Patiserie', description: 'Aluat foietaj cu ciocolată belgiană', image: 'https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400&auto=format&fit=crop' },
-  { name: 'Banana bread', price: 16, category: 'Patiserie', description: 'Rețetă proprie, fără zahăr rafinat', image: 'https://images.unsplash.com/photo-1561917088-ab34775a7e66?w=400&auto=format&fit=crop' },
+  { name: 'Banana bread', price: 16, category: 'Patiserie', description: 'Rețetă proprie, fără zahăr rafinat', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&auto=format&fit=crop' },
   { name: 'Cheesecake', price: 22, category: 'Patiserie', description: 'Cremă Philadelphia, bază biscuiți', image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=400&auto=format&fit=crop' },
 ];
 
