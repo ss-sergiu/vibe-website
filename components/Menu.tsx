@@ -54,8 +54,8 @@ export default function Menu() {
               onClick={() => setActiveCategory(category)}
               className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
                 activeCategory === category
-                  ? 'bg-[#F5E6C8] text-[#1E1200]'
-                  : 'bg-transparent border-2 border-[#F5E6C8] text-[#F5E6C8] hover:shadow-[0_0_20px_rgba(245,230,200,0.3)]'
+                  ? 'bg-[#F5E6C8] text-[#1E1200] hover:scale-105 btn-glow'
+                  : 'bg-transparent border-2 border-[#F5E6C8] text-[#F5E6C8] hover:scale-105 btn-glow'
               }`}
             >
               {category}

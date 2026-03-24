@@ -308,6 +308,11 @@ html.lenis-smooth {
   color: white;
 }
 
+/* Glow pe contur buton - urmează scale */
+.btn-glow:hover {
+  box-shadow: 0 0 20px rgba(245, 230, 200, 0.3);
+}
+
 /* Hide scrollbar pentru tab-uri */
 .scrollbar-hide {
   -ms-overflow-style: none;

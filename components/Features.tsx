@@ -6,7 +6,7 @@ export default function Features() {
   const { elementRef, isVisible } = useScrollAnimation(0.15);
 
   return (
-    <section className="py-20 px-6 bg-[#1C0F07]">
+    <section id="features" className="py-20 px-6 bg-[#1C0F07]">
       <div className="max-w-7xl mx-auto">
 
         {/* TITLU */}
