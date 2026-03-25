@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 
 type MenuItem = { name: string; price: number; category: string; description: string; image: string; objectPosition?: string };
 
@@ -122,13 +123,14 @@ export default function Menu() {
               key={item.name}
               className="bg-[#F5E6C8] rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,230,200,0.3)]"
             >
-              <div className="overflow-hidden h-48">
-                <img
+              <div className="overflow-hidden h-48 relative">
+                <Image
                   src={item.image}
                   alt={item.name}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                  fill
+                  className="object-cover transition-transform duration-300 hover:scale-110"
                   style={item.objectPosition ? { objectPosition: item.objectPosition } : undefined}
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
               </div>
               <div className="p-6 flex flex-col flex-1 justify-between">

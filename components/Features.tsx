@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useScrollAnimation } from '@/lib/hooks/useScrollAnimation';
 
 export default function Features() {
@@ -20,11 +21,16 @@ export default function Features() {
           {/* CARD MARE - stânga */}
           <div className={`bg-[#F5E6C8] rounded-2xl overflow-hidden flex flex-col justify-between min-h-[320px] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,230,200,0.3)] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
             style={{ transitionDelay: '0ms' }}>
-            <img
-              src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1600&auto=format&fit=crop&q=90"
-              alt="Cafea specialitate"
-              className="w-full h-48 object-cover"
-            />
+            <div className="relative w-full h-48">
+              <Image
+                src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1600&auto=format&fit=crop&q=90"
+                alt="Cafea specialitate"
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 66vw"
+              />
+            </div>
             <div className="p-8 flex flex-col justify-between flex-1">
               <div>
                 <h3 className="text-3xl font-bold text-[#1E1200] mb-4">
@@ -48,11 +54,15 @@ export default function Features() {
             {/* CARD MIC 1 */}
             <div className={`bg-[#F5E6C8] rounded-2xl overflow-hidden flex flex-col min-h-[150px] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,230,200,0.3)] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
               style={{ transitionDelay: '150ms' }}>
-              <img
-                src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=800&auto=format&fit=crop"
-                alt="Patiserie artizanală"
-                className="w-full h-40 object-cover"
-              />
+              <div className="relative w-full h-40">
+                <Image
+                  src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=800&auto=format&fit=crop"
+                  alt="Patiserie artizanală"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
               <div className="p-6 flex flex-col flex-1 justify-between">
                 <h4 className="text-xl font-bold text-[#1E1200] mb-3">
                   Patiserie Artizanală
@@ -66,11 +76,15 @@ export default function Features() {
             {/* CARD MIC 2 */}
             <div className={`bg-[#F5E6C8] rounded-2xl overflow-hidden flex flex-col min-h-[150px] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,230,200,0.3)] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
               style={{ transitionDelay: '300ms' }}>
-              <img
-                src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&auto=format&fit=crop"
-                alt="Ambient relaxant"
-                className="w-full h-40 object-cover"
-              />
+              <div className="relative w-full h-40">
+                <Image
+                  src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=800&auto=format&fit=crop"
+                  alt="Ambient relaxant"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
               <div className="p-6 flex flex-col flex-1 justify-between">
                 <h4 className="text-xl font-bold text-[#1E1200] mb-3">
                   Ambient relaxant
