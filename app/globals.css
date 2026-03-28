@@ -70,7 +70,7 @@
 body {
   background: linear-gradient(135deg, #FAFAFA 0%, #E0F2FE 100%);
   color: var(--foreground);
-  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  font-family: var(--font-jakarta), "Segoe UI", Arial, Helvetica, sans-serif;
   font-size: 18px;
   line-height: 1.6;
   min-height: 100vh;
@@ -80,7 +80,7 @@ body {
 
 /* TOATE titlurile folosesc Plus Jakarta Sans (sans-serif modern) */
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-jakarta), "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.02em; /* Tracking subtil pentru aspect modern */
@@ -118,7 +118,7 @@ h6 {
 
 /* Paragrafe folosesc Inter (sans-serif) */
 p {
-  font-family: "Segoe UI", Arial, sans-serif;
+  font-family: var(--font-jakarta), "Segoe UI", Arial, sans-serif;
   font-size: 18px;
   line-height: 1.6;
 }
