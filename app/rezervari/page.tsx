@@ -193,7 +193,7 @@ export default function PaginaRezervari() {
     <>
       {Modal}
       <Navigation />
-      <main className="min-h-screen px-6 pt-28 pb-16 bg-[#1C0F07]">
+      <main className="min-h-screen px-4 sm:px-6 pt-28 pb-16 bg-[#1C0F07]">
         <div className="max-w-2xl mx-auto">
 
           <div className="text-center mb-10">
@@ -221,7 +221,7 @@ export default function PaginaRezervari() {
             ))}
           </div>
 
-          <div className="bg-[#F5E6C8] rounded-3xl p-8">
+          <div className="bg-[#F5E6C8] rounded-3xl p-4 sm:p-8">
 
             {/* PAS 1 — Alege data */}
             {pas === 1 && (
@@ -412,8 +412,8 @@ export default function PaginaRezervari() {
                         onChange={e => setCodTara(e.target.value)}
                         className="px-3 py-3.5 rounded-xl bg-white/60 border-2 border-[#1E1200]/20 text-[#1E1200] focus:outline-none focus:border-[#1E1200] transition-all text-sm font-medium"
                       >
-                        {CODURI_TARI.map(({ cod, tara, flag }) => (
-                          <option key={cod} value={cod}>{flag} {cod}</option>
+                        {CODURI_TARI.map(({ cod }) => (
+                          <option key={cod} value={cod}>{cod}</option>
                         ))}
                       </select>
                       <input
