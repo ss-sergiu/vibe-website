@@ -55,6 +55,12 @@ export default function HeroStarter() {
           >
             Vizitează-ne
           </a>
+          <a
+            href="/rezervari"
+            className="w-full sm:w-auto inline-block px-8 py-4 bg-transparent border-2 border-white text-white text-xl font-semibold rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]"
+          >
+            Rezervări
+          </a>
         </div>
       </div>
 

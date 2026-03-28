@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 
 const links = [
-  { label: 'De ce Vibe?', href: '#features' },
-  { label: 'Meniu', href: '#meniu' },
-  { label: 'Vizitează-ne', href: '#contact' },
+  { label: 'De ce Vibe?', href: '/#features' },
+  { label: 'Meniu', href: '/#meniu' },
+  { label: 'Vizitează-ne', href: '/#contact' },
+  { label: 'Rezervări', href: '/rezervari' },
 ];
 
 export default function Navigation() {
@@ -33,7 +34,7 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
         {/* LOGO */}
-        <a href="#" onClick={() => setMenuOpen(false)} className="text-2xl font-bold text-[#F5E6C8] tracking-wide">
+        <a href="/" onClick={() => setMenuOpen(false)} className="text-2xl font-bold text-[#F5E6C8] tracking-wide">
           Vibe Coffee
         </a>
 
