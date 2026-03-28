@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh repo:*)",
+      "Bash(npx vercel:*)",
+      "WebSearch",
+      "WebFetch(domain:unsplash.com)",
+      "Bash(pip show:*)",
+      "Bash(pip install:*)",
+      "Bash(py --version)",
+      "Bash(npm list:*)",
+      "Bash(cd /tmp)",
+      "Bash(npm install:*)",
+      "Bash(node generate-docx.mjs)",
+      "Bash(node /tmp/generate-docx.mjs)",
+      "Bash(echo $TEMP)",
+      "Read(//c/Users/Sergiu/AppData/Local/Temp/**)",
+      "Bash(node \"C:/Users/Sergiu/AppData/Local/Temp/docx-gen/generate.mjs\")",
+      "Bash(node \"C:/Users/Sergiu/AppData/Local/Temp/docx-gen/generate.cjs\")",
+      "Bash(node -e \"const s = ''organiza\\\\u021biei''; console.log\\(s\\);\")",
+      "Bash(node -e \":*)",
+      "Bash(node \"C:/Users/Sergiu/AppData/Local/Temp/docx-gen/gen2.js\")",
+      "Bash(node \"C:/Users/Sergiu/AppData/Local/Temp/docx-gen/gen3.js\")",
+      "Bash(powershell -Command \":*)",
+      "Bash(powershell -NoProfile -Command \":*)",
+      "Bash(powershell -NoProfile -File \"C:/Users/Sergiu/AppData/Local/Temp/docx-gen/write-content.ps1\")",
+      "Bash(echo \"exit $?\")",
+      "Bash(powershell -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/Sergiu/AppData/Local/Temp/docx-gen/write-content.ps1\")",
+      "Bash(node -e \"const d = JSON.parse\\(require\\(''fs''\\).readFileSync\\(''C:/Users/Sergiu/AppData/Local/Temp/docx-gen/content.json'',''utf8''\\)\\); console.log\\(d.title\\); console.log\\(d.intro[0].substring\\(0,60\\)\\);\")",
+      "Bash(node \"C:/Users/Sergiu/AppData/Local/Temp/docx-gen/gen4.js\")",
+      "Bash(supabase --version)",
+      "Bash(winget --version)",
+      "Bash(scoop --version)",
+      "Bash(winget install:*)",
+      "Bash(curl -L -o \"$TEMP/supabase_windows_amd64.zip\" \"https://github.com/supabase/cli/releases/latest/download/supabase_windows_amd64.zip\")",
+      "Bash(curl -sI \"https://github.com/supabase/cli/releases/latest\")",
+      "Bash(curl -L -o \"$TEMP/supabase_windows.zip\" \"https://github.com/supabase/cli/releases/download/v2.84.2/supabase_windows_amd64.zip\")",
+      "Read(//d/Dev/vibe-website/$TEMP/**)"
+    ]
+  }
+}
