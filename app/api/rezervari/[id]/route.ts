@@ -18,9 +18,8 @@ export async function PATCH(
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Trimite email notificare status (ne-blocant)
   if (data) {
-    trimiteEmailStatus({
+    await trimiteEmailStatus({
       id: Number(id),
       email: data.email,
       nume: data.nume,

@@ -36,9 +36,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Trimite email de confirmare clientului + notificare admin (ne-blocante)
-  trimiteEmailRezervare({ email, nume, data_ora, nr_persoane: nr_persoane ?? 2 }).catch((err) => console.error('[email-client]', err));
-  trimiteEmailAdmin({ email, nume, telefon, data_ora, nr_persoane: nr_persoane ?? 2 }).catch((err) => console.error('[email-admin]', err));
+  // Trimite emailuri înainte de răspuns (Vercel termină funcția după response)
+  await Promise.allSettled([
+    trimiteEmailRezervare({ email, nume, data_ora, nr_persoane: nr_persoane ?? 2 }),
+    trimiteEmailAdmin({ email, nume, telefon, data_ora, nr_persoane: nr_persoane ?? 2 }),
+  ]);
 
   return NextResponse.json({ success: true, rezervare: data }, { status: 201 });
 }
