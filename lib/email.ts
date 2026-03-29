@@ -1,15 +1,25 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const FROM = 'Vibe Caffè <onboarding@resend.dev>';
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://vibe-website-corvay44j-ss-sergius-projects.vercel.app';
+const FROM = 'Vibe Caffè <ss.tornea@gmail.com>';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://vibe-website-pied.vercel.app';
 
 const BRUN = '#2C1810';
 const CREM = '#F5E6C8';
 const BRUN_TEXT = '#3B2507';
 const BTN_BG = '#1E1200';
 const BTN_TEXT = '#F5E6C8';
+
+function getTransport() {
+  return nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+      user: 'ss.tornea@gmail.com',
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
+}
 
 function formatDataOra(dataOraStr: string) {
   const d = new Date(dataOraStr);
@@ -82,12 +92,11 @@ export async function trimiteEmailRezervare({
     </p>
   `;
 
-  await resend.emails.send({
+  await getTransport().sendMail({
     from: FROM,
     to: email,
     subject: 'Cerere rezervare Vibe Caffè',
     html: emailLayout(content),
-
   });
 }
 
@@ -118,12 +127,11 @@ export async function trimiteEmailAdmin({
     ${btn('Vezi în panou admin', `${BASE_URL}/admin`)}
   `;
 
-  await resend.emails.send({
+  await getTransport().sendMail({
     from: FROM,
     to: adminEmail,
     subject: `Rezervare nouă — ${nume}, ${data} ${ora}`,
     html: emailLayout(content),
-
   });
 }
 
@@ -142,7 +150,6 @@ export async function trimiteEmailStatus({
   };
   const labelStatus = statusLabel[status] ?? status;
 
-  // Mesaj extra + butoane per status
   let mesajExtra = '';
   let butoane = '';
 
@@ -173,11 +180,10 @@ export async function trimiteEmailStatus({
     ${butoane}
   `;
 
-  await resend.emails.send({
+  await getTransport().sendMail({
     from: FROM,
     to: email,
     subject: `Rezervare ${labelStatus} · Vibe Caffè`,
     html: emailLayout(content),
-
   });
 }
