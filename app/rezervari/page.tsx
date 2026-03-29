@@ -201,7 +201,7 @@ export default function PaginaRezervari() {
         <div className="max-w-2xl mx-auto">
 
           <div className="text-center mb-10">
-            <h1 className="text-5xl font-bold text-[#F5E6C8] mb-3">Rezervă o masă</h1>
+            <h1 className="font-dm-serif text-5xl text-[#F5E6C8] mb-3">Fă o rezervare</h1>
             <p className="text-[#F5E6C8]/50 text-lg">La Vibe Caffè te așteptăm cu drag</p>
           </div>
 
@@ -230,7 +230,7 @@ export default function PaginaRezervari() {
             {/* PAS 1 — Alege data */}
             {pas === 1 && (
               <div>
-                <h2 className="text-2xl font-bold text-[#1E1200] mb-2">Alege data</h2>
+                <h2 className="font-dm-serif text-2xl text-[#1E1200] mb-2">Alege data</h2>
                 <p className="text-[#3B2507]/60 mb-5 text-base">Selectează ziua în care vrei să ne vizitezi</p>
 
                 {/* Butoane rapide */}
@@ -329,7 +329,7 @@ export default function PaginaRezervari() {
             {/* PAS 2 — Alege ora */}
             {pas === 2 && (
               <div>
-                <h2 className="text-2xl font-bold text-[#1E1200] mb-1">Alege ora</h2>
+                <h2 className="font-dm-serif text-2xl text-[#1E1200] mb-1">Alege ora</h2>
                 <p className="text-[#3B2507]/60 mb-6 text-base">
                   {new Date(data).toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' })}
                 </p>
@@ -369,7 +369,7 @@ export default function PaginaRezervari() {
             {/* PAS 3 — Date importante */}
             {pas === 3 && (
               <div>
-                <h2 className="text-2xl font-bold text-[#1E1200] mb-1">Date importante</h2>
+                <h2 className="font-dm-serif text-2xl text-[#1E1200] mb-1">Date importante</h2>
                 <p className="text-[#3B2507]/60 mb-6 text-base">
                   {new Date(data).toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' })} · ora {ora}
                 </p>

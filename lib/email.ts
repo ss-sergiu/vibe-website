@@ -46,6 +46,9 @@ function emailLayout(content: string) {
   return `
     <!DOCTYPE html>
     <html>
+    <head>
+      <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
+    </head>
     <body style="margin:0;padding:24px;background:transparent;font-family:sans-serif">
       <div style="max-width:480px;margin:0 auto;border-radius:16px;overflow:hidden;background:${CREM}">
 
@@ -80,7 +83,7 @@ export async function trimiteEmailRezervare({
   const persoane = `${nr_persoane} ${nr_persoane === 1 ? 'persoană' : 'persoane'}`;
 
   const content = `
-    <h2 style="margin:0 0 16px;color:${BRUN};font-size:18px;font-weight:700">
+    <h2 style="margin:0 0 16px;color:${BRUN};font-family:'DM Serif Display',Georgia,serif;font-size:18px;font-weight:400">
       ${zi}, ${data} · ${ora}
     </h2>
     <p style="margin:0 0 14px;color:${BRUN_TEXT};font-size:16px;line-height:1.6">
@@ -112,7 +115,7 @@ export async function trimiteEmailAdmin({
   const persoane = `${nr_persoane} ${nr_persoane === 1 ? 'persoană' : 'persoane'}`;
 
   const content = `
-    <h2 style="margin:0 0 16px;color:${BRUN};font-size:18px;font-weight:700">
+    <h2 style="margin:0 0 16px;color:${BRUN};font-family:'DM Serif Display',Georgia,serif;font-size:18px;font-weight:400">
       Rezervare nouă
     </h2>
     <p style="margin:0 0 14px;color:${BRUN_TEXT};font-size:16px;line-height:1.6">
@@ -168,7 +171,7 @@ export async function trimiteEmailStatus({
     : `<strong>${labelStatus}</strong>`;
 
   const content = `
-    <h2 style="margin:0 0 16px;color:${BRUN};font-size:18px;font-weight:700">
+    <h2 style="margin:0 0 16px;color:${BRUN};font-family:'DM Serif Display',Georgia,serif;font-size:18px;font-weight:400">
       Rezervare ${status === 'respinsă' ? `<span style="color:#8B1A1A">${labelStatus}</span>` : labelStatus}
     </h2>
     <p style="margin:0 0 14px;color:${BRUN_TEXT};font-size:16px;line-height:1.6">

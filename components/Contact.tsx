@@ -4,7 +4,7 @@ export default function Contact() {
       <div className="max-w-7xl mx-auto">
 
         {/* TITLU */}
-        <h2 className="text-4xl md:text-5xl font-bold text-[#F5E6C8] text-center mb-12">
+        <h2 className="font-dm-serif text-4xl md:text-5xl text-[#F5E6C8] text-center mb-12">
           Vizitează-ne
         </h2>
 
@@ -19,7 +19,7 @@ export default function Contact() {
 
                 {/* Adresă - stânga */}
                 <div>
-                  <h3 className="text-xl font-bold text-[#1E1200] mb-4">Adresă</h3>
+                  <h3 className="font-dm-serif text-xl text-[#1E1200] mb-4">Adresă</h3>
                   <p className="text-[#3B2507] text-lg leading-relaxed">
                     Strada Cafelei nr. 12<br />
                     Sector 1, București<br />
@@ -34,7 +34,7 @@ export default function Contact() {
 
                 {/* Contact - dreapta */}
                 <div>
-                  <h3 className="text-xl font-bold text-[#1E1200] mb-4">Contact</h3>
+                  <h3 className="font-dm-serif text-xl text-[#1E1200] mb-4">Contact</h3>
 
                   {/* Telefon */}
                   <a

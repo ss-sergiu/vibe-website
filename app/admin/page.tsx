@@ -167,7 +167,7 @@ export default function AdminPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-[#F5E6C8]">Rezervări</h1>
+            <h1 className="font-dm-serif text-3xl text-[#F5E6C8]">Rezervări</h1>
             <p className="text-[#F5E6C8]/40 text-sm mt-1">Vibe Caffè — panou administrare</p>
           </div>
           <div className="flex gap-3">

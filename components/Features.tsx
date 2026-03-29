@@ -11,7 +11,7 @@ export default function Features() {
       <div className="max-w-7xl mx-auto">
 
         {/* TITLU */}
-        <h2 className="text-4xl md:text-5xl font-bold text-[#F5E6C8] text-center mb-12">
+        <h2 className="font-dm-serif text-4xl md:text-5xl text-[#F5E6C8] text-center mb-12">
           De ce Vibe Coffee?
         </h2>
 
@@ -33,7 +33,7 @@ export default function Features() {
             </div>
             <div className="p-8 flex flex-col justify-between flex-1">
               <div>
-                <h3 className="text-3xl font-bold text-[#1E1200] mb-4">
+                <h3 className="font-dm-serif text-3xl text-[#1E1200] mb-4">
                   Cafea de specialitate, boabe proaspăt prăjite
                 </h3>
                 <p className="text-lg text-[#3B2507] leading-relaxed">
@@ -64,7 +64,7 @@ export default function Features() {
                 />
               </div>
               <div className="p-6 flex flex-col flex-1 justify-between">
-                <h4 className="text-xl font-bold text-[#1E1200] mb-3">
+                <h4 className="font-dm-serif text-xl text-[#1E1200] mb-3">
                   Patiserie Artizanală
                 </h4>
                 <p className="text-[#3B2507]">
@@ -86,7 +86,7 @@ export default function Features() {
                 />
               </div>
               <div className="p-6 flex flex-col flex-1 justify-between">
-                <h4 className="text-xl font-bold text-[#1E1200] mb-3">
+                <h4 className="font-dm-serif text-xl text-[#1E1200] mb-3">
                   Ambient relaxant
                 </h4>
                 <p className="text-[#3B2507]">

@@ -105,7 +105,7 @@ export default function Menu() {
       <div className="max-w-7xl mx-auto">
 
         {/* TITLU */}
-        <h2 className="text-4xl md:text-5xl font-bold text-[#F5E6C8] text-center mb-12">
+        <h2 className="font-dm-serif text-4xl md:text-5xl text-[#F5E6C8] text-center mb-12">
           Meniu
         </h2>
 

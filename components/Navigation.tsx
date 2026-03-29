@@ -34,7 +34,7 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
         {/* LOGO */}
-        <a href="/" onClick={() => setMenuOpen(false)} className="text-2xl font-bold text-[#F5E6C8] tracking-wide">
+        <a href="/" onClick={() => setMenuOpen(false)} className="font-dm-serif text-2xl text-[#F5E6C8] tracking-wide">
           Vibe Coffee
         </a>
 

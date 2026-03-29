@@ -27,7 +27,7 @@ export default function HeroStarter() {
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white">
         {/* TITLU PRINCIPAL */}
         <h1
-          className="hero-animate hero-delay-1 text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-light mb-6 text-[#F5E6C8] text-shadow-2xl"
+          className="hero-animate hero-delay-1 font-dm-serif text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-light mb-6 text-[#F5E6C8] text-shadow-2xl"
           style={{ textShadow: '0 4px 24px rgba(0,0,0,0.7), 0 1px 4px rgba(0,0,0,0.5)' }}
         >
           Cafeaua perfectă. Mereu.
