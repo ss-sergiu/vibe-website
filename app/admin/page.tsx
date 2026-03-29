@@ -51,6 +51,8 @@ export default function AdminPage() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [sortField, setSortField] = useState<keyof Rezervare>('created_at');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     if (sessionStorage.getItem('adminOk') === '1') setAutentificat(true);
@@ -137,7 +139,19 @@ export default function AdminPage() {
     );
   }
 
-  const afisate = filtru === 'toate' ? rezervari : rezervari.filter(r => r.status === filtru);
+  function toggleSort(field: keyof Rezervare) {
+    if (sortField === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortField(field); setSortDir('asc'); }
+  }
+
+  const afisate = (filtru === 'toate' ? rezervari : rezervari.filter(r => r.status === filtru))
+    .slice()
+    .sort((a, b) => {
+      const av = a[sortField] ?? '';
+      const bv = b[sortField] ?? '';
+      const cmp = String(av).localeCompare(String(bv), 'ro', { numeric: true });
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
 
   const stats = {
     total:     rezervari.length,
@@ -210,12 +224,25 @@ export default function AdminPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[#F5E6C8]/10 text-[#F5E6C8]/40 text-xs uppercase tracking-wider">
-                    <th className="text-left px-5 py-3">Nume</th>
-                    <th className="text-left px-5 py-3">Data & Ora</th>
-                    <th className="text-left px-5 py-3">Pers.</th>
-                    <th className="text-left px-5 py-3">Telefon</th>
-                    <th className="text-left px-5 py-3">Email</th>
-                    <th className="text-left px-5 py-3">Status</th>
+                    {([
+                      ['nume', 'Nume'],
+                      ['data_ora', 'Data & Ora'],
+                      ['nr_persoane', 'Pers.'],
+                      ['telefon', 'Telefon'],
+                      ['email', 'Email'],
+                      ['status', 'Status'],
+                      ['created_at', 'Înregistrat'],
+                    ] as [keyof Rezervare, string][]).map(([field, label]) => (
+                      <th key={field} className="text-left px-5 py-3">
+                        <button onClick={() => toggleSort(field)}
+                          className="flex items-center gap-1 hover:text-[#F5E6C8] transition-colors">
+                          {label}
+                          <span className="text-[0.6rem]">
+                            {sortField === field ? (sortDir === 'asc' ? '▲' : '▼') : '⇅'}
+                          </span>
+                        </button>
+                      </th>
+                    ))}
                     <th className="px-5 py-3"></th>
                   </tr>
                 </thead>
@@ -227,9 +254,9 @@ export default function AdminPage() {
                       <tr key={r.id} className={`border-b border-[#F5E6C8]/5 hover:bg-[#F5E6C8]/5 transition-colors ${i % 2 === 0 ? '' : 'bg-[#F5E6C8]/[0.02]'}`}>
                         <td className="px-5 py-3 text-[#F5E6C8] font-medium">{r.nume}</td>
                         <td className="px-5 py-3 text-[#F5E6C8]/70">
-                          {dataOra.toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          {dataOra.toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/Bucharest' })}
                           <span className="block text-[#F5E6C8]/40 text-xs">
-                            {dataOra.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}
+                            {dataOra.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Bucharest' })}
                           </span>
                         </td>
                         <td className="px-5 py-3 text-[#F5E6C8]/70">{r.nr_persoane}</td>
@@ -251,6 +278,12 @@ export default function AdminPage() {
                               </button>
                             ))}
                           </div>
+                        </td>
+                        <td className="px-5 py-3 text-[#F5E6C8]/50">
+                          {new Date(r.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/Bucharest' })}
+                          <span className="block text-[#F5E6C8]/30 text-xs">
+                            {new Date(r.created_at).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Bucharest' })}
+                          </span>
                         </td>
                         <td className="px-5 py-3 text-right">
                           {confirmDelete === r.id ? (
@@ -301,8 +334,11 @@ export default function AdminPage() {
                         </button>
                       )}
                     </div>
-                    <p className="text-[#F5E6C8]/50 text-xs mb-3">
-                      {dataOra.toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })} · {dataOra.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })} · {r.nr_persoane} pers.
+                    <p className="text-[#F5E6C8]/50 text-xs mb-1">
+                      {dataOra.toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', timeZone: 'Europe/Bucharest' })} · {dataOra.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Bucharest' })} · {r.nr_persoane} pers.
+                    </p>
+                    <p className="text-[#F5E6C8]/30 text-xs mb-3">
+                      Înregistrat: {new Date(r.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/Bucharest' })} · {new Date(r.created_at).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Bucharest' })}
                     </p>
                     <div className="flex gap-1">
                       {STATUSURI.map(({ val, scurt }) => (
