@@ -37,8 +37,8 @@ export async function POST(request: NextRequest) {
   }
 
   // Trimite email de confirmare clientului + notificare admin (ne-blocante)
-  trimiteEmailRezervare({ email, nume, data_ora, nr_persoane: nr_persoane ?? 2 }).catch(() => {});
-  trimiteEmailAdmin({ email, nume, telefon, data_ora, nr_persoane: nr_persoane ?? 2 }).catch(() => {});
+  trimiteEmailRezervare({ email, nume, data_ora, nr_persoane: nr_persoane ?? 2 }).catch((err) => console.error('[email-client]', err));
+  trimiteEmailAdmin({ email, nume, telefon, data_ora, nr_persoane: nr_persoane ?? 2 }).catch((err) => console.error('[email-admin]', err));
 
   return NextResponse.json({ success: true, rezervare: data }, { status: 201 });
 }
