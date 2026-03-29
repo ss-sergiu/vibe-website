@@ -65,6 +65,7 @@ export default function PaginaRezervari() {
   const [form, setForm] = useState({ nume: '', email: '', telefon: '', nr_persoane: 2 });
   const [codTara, setCodTara] = useState('+40');
   const [emailAtins, setEmailAtins] = useState(false);
+  const [telefonAtins, setTelefonAtins] = useState(false);
   const [loading, setLoading] = useState(false);
   const [succes, setSucces] = useState(false);
   const [eroare, setEroare] = useState('');
@@ -77,6 +78,9 @@ export default function PaginaRezervari() {
 
   const emailValid = EMAIL_REGEX.test(form.email);
   const emailEroare = emailAtins && form.email && !emailValid;
+  const cifreTelefon = form.telefon.replace(/\D/g, '').length;
+  const cifreNecesare = codTara === '+373' ? 8 : 9;
+  const telefonEroare = telefonAtins && form.telefon && cifreTelefon !== cifreNecesare;
 
   useEffect(() => {
     if (pas !== 3) return;
@@ -161,7 +165,7 @@ export default function PaginaRezervari() {
       <>
         {Modal}
         <Navigation />
-        <main className="min-h-screen flex items-center justify-center px-6 pt-24 pb-16 bg-[#1C0F07]">
+        <main className="min-h-screen flex items-center justify-center px-6 pt-28 pb-16 bg-[#1C0F07]">
           <div className="bg-[#F5E6C8] rounded-3xl p-10 text-center max-w-md w-full">
             <div className="mb-6">
               <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#1E1200" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto">
@@ -379,7 +383,7 @@ export default function PaginaRezervari() {
                       ref={numeRef}
                       placeholder="Ion Popescu"
                       value={form.nume}
-                      onChange={e => setForm({ ...form, nume: e.target.value })}
+                      onChange={e => setForm({ ...form, nume: e.target.value.slice(0, 35) })}
                       className="w-full px-5 py-3.5 rounded-xl bg-white/60 border-2 border-[#1E1200]/20 text-[#1E1200] placeholder-[#3B2507]/30 focus:outline-none focus:border-[#1E1200] transition-all"
                     />
                   </div>
@@ -399,7 +403,7 @@ export default function PaginaRezervari() {
                       }`}
                     />
                     {emailEroare && (
-                      <p className="mt-1 text-red-600 text-xs">Introdu un email valid (ex: ion@email.com)</p>
+                      <p className="mt-1 text-red-600 text-xs">Introduceți un email valid, ex:<br />ion@mail.com</p>
                     )}
                   </div>
 
@@ -439,9 +443,15 @@ export default function PaginaRezervari() {
                           }
                           setForm({ ...form, telefon: formatat });
                         }}
-                        className="flex-1 min-w-0 px-5 py-3.5 rounded-xl bg-white/60 border-2 border-[#1E1200]/20 text-[#1E1200] placeholder-[#3B2507]/30 focus:outline-none focus:border-[#1E1200] transition-all"
+                        onBlur={() => setTelefonAtins(true)}
+                        className={`flex-1 min-w-0 px-5 py-3.5 rounded-xl bg-white/60 border-2 text-[#1E1200] placeholder-[#3B2507]/30 focus:outline-none transition-all ${
+                          telefonEroare ? 'border-red-400 focus:border-red-500' : 'border-[#1E1200]/20 focus:border-[#1E1200]'
+                        }`}
                       />
                     </div>
+                    {telefonEroare && (
+                      <p className="mt-1 text-red-600 text-xs pl-1">Introduceți {cifreNecesare} cifre</p>
+                    )}
                   </div>
 
                   {/* Număr persoane */}
