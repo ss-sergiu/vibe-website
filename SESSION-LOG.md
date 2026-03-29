@@ -1,3 +1,41 @@
+## 29.03.2026 — UX mobile pagina rezervări + validări formular
+
+### Ce s-a făcut
+- Adăugat font Plus Jakarta Sans via `next/font/google` — afișat consistent pe mobile și PC
+- Validare email Supabase: migrare `CHECK constraint` pe coloana `email` în PostgreSQL
+- Selector cod țară: scos flag emoji, afișat doar codul (ex: `+40`)
+- Câmp telefon: format automat cu spații (XX XXX XXX pentru Moldova, XXX XXX XXX pentru restul)
+- Limită max cifre: 8 pentru `+373`, 9 pentru restul — mesaj eroare „Introduceți X cifre"
+- Limită max 35 caractere la câmpul Nume (silențios)
+- Fix overflow câmp telefon pe mobile (`min-w-0` + `flex-shrink-0`)
+- Padding responsiv pagina rezervări: `px-4 sm:px-6`, card `p-4 sm:p-8`
+- Label-uri formular indentate cu `pl-1` față de chenar
+- Fix confirmare rezervare: cardul nu mai e acoperit de navbar (`pt-28`)
+- Mesaj eroare email actualizat: „Introduceți un email valid, ex: / ion@mail.com"
+- Buton „Rezervă din nou" redenumit în „Fă o altă rezervare"
+- Iconița de pe pagina de confirmare schimbată din ☕ în pin locație (SVG)
+- Fix hover butoane rapide dată: adăugat `pt-2` ca să nu fie tăiat chenarul la scale
+- Migrare Supabase aplicată: `20260329000000_add_email_validation.sql`
+
+### Ce rămâne
+- [ ] Email de confirmare la rezervare
+- [ ] Panou de administrare rezervări
+- [ ] Autentificare (dacă se dorește restricționarea RLS)
+
+### Commits
+- `cf54c70` fix: îmbunătățiri UX pagina rezervări, font Plus Jakarta Sans și validare email Supabase
+- `d135e2e` style: îmbunătățiri mobile pe pagina rezervări — padding, flag scos din selector
+- `bfbae75` style: indent label-uri formular rezervări pe mobile
+- `44f2b8f` fix: câmp telefon nu mai iese din ecran pe mobile
+- `09843b4` feat: validări formular rezervări — telefon, email, limită nume
+
+### Decizii importante
+- Font Plus Jakarta Sans self-hosted de Next.js (fără request extern la runtime)
+- Validare telefon: doar la blur, mesaj discret fără a bloca progresul
+- Overflow telefon rezolvat cu `min-w-0` pe `flex-1` input (pattern standard CSS flexbox)
+
+---
+
 ## 29.03.2026 — Pagina de rezervări cu formular 3 pași
 
 ### Ce s-a făcut

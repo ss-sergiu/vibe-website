@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { trimiteEmailRezervare } from '@/lib/email';
 
 export async function GET() {
   const { data, error } = await supabase
@@ -34,6 +35,9 @@ export async function POST(request: NextRequest) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Trimite email de confirmare (ne-blocant)
+  trimiteEmailRezervare({ email, nume, data_ora, nr_persoane: nr_persoane ?? 2 }).catch(() => {});
 
   return NextResponse.json({ success: true, rezervare: data }, { status: 201 });
 }

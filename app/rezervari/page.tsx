@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Navigation from '@/components/Navigation';
 import FooterStarter from '@/components/FooterStarter';
 
-const ORE_DISPONIBILE = Array.from({ length: 25 }, (_, i) => {
+const ORE_DISPONIBILE = Array.from({ length: 24 }, (_, i) => {
   const totalMinute = 10 * 60 + i * 30;
   const h = String(Math.floor(totalMinute / 60)).padStart(2, '00');
   const m = String(totalMinute % 60).padStart(2, '0');
@@ -147,7 +147,7 @@ export default function PaginaRezervari() {
     <div className="fixed inset-0 z-[9999] flex items-center justify-center px-6">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={continuaRezervarea} />
       <div className="relative bg-[#F5E6C8] rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
-        <p className="text-2xl font-bold text-[#1E1200] mb-8">Nu ai finisat rezervarea.</p>
+        <p className="text-3xl font-bold text-[#1E1200] mb-8">Nu ai finalizat rezervarea!</p>
         <div className="flex flex-col gap-3">
           <button onClick={continuaRezervarea} className="w-full py-3.5 bg-[#1E1200] hover:bg-[#3B2507] text-[#F5E6C8] font-semibold rounded-2xl transition-all duration-300">
             Continuă rezervarea
@@ -173,13 +173,13 @@ export default function PaginaRezervari() {
                 <circle cx="12" cy="10" r="3"/>
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-[#1E1200] mb-6">Rezervare confirmată!</h2>
-            <p className="text-[#1E1200] text-xl leading-relaxed mb-8">
-              <strong>{form.nume}</strong>, te așteptăm{' '}
-              <strong>{new Date(data).toLocaleDateString('ro-RO', { weekday: 'long' })}</strong>,<br />
-              <strong>{new Date(data).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long' })}</strong>{' '}
-              la <strong>{ora}</strong> – <strong>{form.nr_persoane} {form.nr_persoane === 1 ? 'persoană' : 'persoane'}</strong>
+            <h2 className="text-3xl font-bold text-[#1E1200] mb-6">Rezervare finalizată</h2>
+            <p className="text-[#1E1200] text-lg leading-relaxed mb-2">
+              <strong>{form.nume}</strong>, după ce confirmăm rezervarea,<br />
+              te așteptăm <strong>{new Date(data).toLocaleDateString('ro-RO', { weekday: 'long' })}</strong>, <strong>{new Date(data).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long' })}</strong><br />
+              la <strong>{ora}</strong> – <strong>{form.nr_persoane} {form.nr_persoane === 1 ? 'persoană' : 'persoane'}</strong>.
             </p>
+            <p className="text-[#3B2507]/60 text-sm mb-8">Vei primi un email de confirmare.</p>
             <button
               onClick={() => { setPas(1); setData(''); setOra(''); setForm({ nume: '', email: '', telefon: '', nr_persoane: 2 }); setCodTara('+40'); setEmailAtins(false); setSucces(false); setCalendarLuna(azi.getMonth()); setCalendarAn(azi.getFullYear()); }}
               className="px-8 py-3 bg-[#1E1200] hover:bg-[#3B2507] text-[#F5E6C8] font-semibold rounded-full transition-all duration-300"
@@ -382,6 +382,7 @@ export default function PaginaRezervari() {
                       type="text"
                       ref={numeRef}
                       placeholder="Ion Popescu"
+                      autoComplete="name"
                       value={form.nume}
                       onChange={e => setForm({ ...form, nume: e.target.value.slice(0, 35) })}
                       className="w-full px-5 py-3.5 rounded-xl bg-white/60 border-2 border-[#1E1200]/20 text-[#1E1200] placeholder-[#3B2507]/30 focus:outline-none focus:border-[#1E1200] transition-all"
@@ -395,6 +396,7 @@ export default function PaginaRezervari() {
                       type="email"
                       ref={emailRef}
                       placeholder="ion@email.com"
+                      autoComplete="email"
                       value={form.email}
                       onChange={e => setForm({ ...form, email: e.target.value })}
                       onBlur={() => setEmailAtins(true)}
@@ -424,6 +426,7 @@ export default function PaginaRezervari() {
                         type="tel"
                         ref={telefonRef}
                         placeholder={codTara === '+373' ? '60 000 000' : '740 000 000'}
+                        autoComplete="tel-national"
                         value={form.telefon}
                         onChange={e => {
                           const cifre = e.target.value.replace(/\D/g, '');
@@ -492,7 +495,7 @@ export default function PaginaRezervari() {
                     disabled={!form.nume || !form.email || !emailValid || !form.telefon || loading}
                     className="flex-[2] py-4 bg-[#1E1200] hover:bg-[#3B2507] disabled:opacity-30 disabled:cursor-not-allowed text-[#F5E6C8] font-semibold text-lg rounded-2xl transition-all duration-300"
                   >
-                    {loading ? 'Se trimite...' : 'Confirmă rezervarea'}
+                    {loading ? 'Se trimite...' : 'Finalizează rezervarea'}
                   </button>
                 </div>
               </div>
