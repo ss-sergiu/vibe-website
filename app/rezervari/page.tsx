@@ -13,13 +13,13 @@ const ORE_DISPONIBILE = Array.from({ length: 24 }, (_, i) => {
 
 const CODURI_TARI = [
   { cod: '+40', tara: 'România', flag: '🇷🇴' },
+  { cod: '+373',tara: 'Moldova', flag: '🇲🇩' },
   { cod: '+1',  tara: 'SUA',     flag: '🇺🇸' },
   { cod: '+44', tara: 'UK',      flag: '🇬🇧' },
   { cod: '+49', tara: 'Germania',flag: '🇩🇪' },
   { cod: '+33', tara: 'Franța',  flag: '🇫🇷' },
   { cod: '+39', tara: 'Italia',  flag: '🇮🇹' },
   { cod: '+34', tara: 'Spania',  flag: '🇪🇸' },
-  { cod: '+373',tara: 'Moldova', flag: '🇲🇩' },
 ];
 
 const azi = new Date();
@@ -173,7 +173,7 @@ export default function PaginaRezervari() {
                 <circle cx="12" cy="10" r="3"/>
               </svg>
             </div>
-            <h2 className="text-3xl font-bold text-[#1E1200] mb-6">Rezervare finalizată</h2>
+            <h2 className="font-dm-serif text-3xl text-[#1E1200] mb-6">Rezervare finalizată</h2>
             <p className="text-[#1E1200] text-lg leading-relaxed mb-2">
               <strong>{form.nume}</strong>, după ce confirmăm rezervarea,<br />
               te așteptăm <strong>{new Date(data).toLocaleDateString('ro-RO', { weekday: 'long' })}</strong>, <strong>{new Date(data).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long' })}</strong><br />

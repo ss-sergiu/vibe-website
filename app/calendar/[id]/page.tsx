@@ -114,7 +114,7 @@ export default async function CalendarPage({
       <div style={{ maxWidth: '400px', width: '100%' }}>
         {/* Header */}
         <div style={{ background: BRUN, borderRadius: '16px 16px 0 0', padding: '24px 28px 20px' }}>
-          <p style={{ margin: 0, color: CREM, fontSize: '20px', fontWeight: 700, letterSpacing: '-0.3px' }}>Vibe Caffè</p>
+          <p style={{ margin: 0, color: CREM, fontFamily: "'DM Serif Display', Georgia, serif", fontSize: '22px', fontWeight: 400, letterSpacing: '-0.3px' }}>Vibe Caffè</p>
           <p style={{ margin: '4px 0 0', color: CREM, opacity: 0.5, fontSize: '13px' }}>str. Cafelei nr. 12, București</p>
         </div>
 

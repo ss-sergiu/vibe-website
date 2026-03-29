@@ -50,11 +50,11 @@ function emailLayout(content: string) {
       <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
     </head>
     <body style="margin:0;padding:24px;background:transparent;font-family:sans-serif">
-      <div style="max-width:480px;margin:0 auto;border-radius:16px;overflow:hidden;background:${CREM}">
+      <div style="max-width:600px;margin:0 auto;border-radius:16px;overflow:hidden;background:${CREM}">
 
         <!-- Header brun -->
         <div style="background:${BRUN};padding:24px 28px 20px">
-          <p style="margin:0;color:${CREM};font-size:20px;font-weight:700;letter-spacing:-0.3px">Vibe Caffè</p>
+          <p style="margin:0;color:${CREM};font-family:'DM Serif Display',Georgia,serif;font-size:22px;font-weight:400;letter-spacing:-0.3px">Vibe Caffè</p>
           <p style="margin:4px 0 0;color:${CREM};opacity:0.5;font-size:13px">București</p>
         </div>
 
@@ -83,8 +83,8 @@ export async function trimiteEmailRezervare({
   const persoane = `${nr_persoane} ${nr_persoane === 1 ? 'persoană' : 'persoane'}`;
 
   const content = `
-    <h2 style="margin:0 0 16px;color:${BRUN};font-family:'DM Serif Display',Georgia,serif;font-size:18px;font-weight:400">
-      ${zi}, ${data} · ${ora}
+    <h2 style="margin:0 0 16px;color:${BRUN};font-size:24px;font-weight:700">
+      ${zi} · ${data} · ${ora}
     </h2>
     <p style="margin:0 0 14px;color:${BRUN_TEXT};font-size:16px;line-height:1.6">
       <strong>${nume}</strong>, ai cerut o rezervare la Vibe Caffè pentru
@@ -115,7 +115,7 @@ export async function trimiteEmailAdmin({
   const persoane = `${nr_persoane} ${nr_persoane === 1 ? 'persoană' : 'persoane'}`;
 
   const content = `
-    <h2 style="margin:0 0 16px;color:${BRUN};font-family:'DM Serif Display',Georgia,serif;font-size:18px;font-weight:400">
+    <h2 style="margin:0 0 16px;color:${BRUN};font-size:24px;font-weight:700">
       Rezervare nouă
     </h2>
     <p style="margin:0 0 14px;color:${BRUN_TEXT};font-size:16px;line-height:1.6">
@@ -171,7 +171,7 @@ export async function trimiteEmailStatus({
     : `<strong>${labelStatus}</strong>`;
 
   const content = `
-    <h2 style="margin:0 0 16px;color:${BRUN};font-family:'DM Serif Display',Georgia,serif;font-size:18px;font-weight:400">
+    <h2 style="margin:0 0 16px;color:${BRUN};font-size:24px;font-weight:700">
       Rezervare ${status === 'respinsă' ? `<span style="color:#8B1A1A">${labelStatus}</span>` : labelStatus}
     </h2>
     <p style="margin:0 0 14px;color:${BRUN_TEXT};font-size:16px;line-height:1.6">
