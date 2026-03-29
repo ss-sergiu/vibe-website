@@ -410,7 +410,7 @@ export default function PaginaRezervari() {
                       <select
                         value={codTara}
                         onChange={e => setCodTara(e.target.value)}
-                        className="px-3 py-3.5 rounded-xl bg-white/60 border-2 border-[#1E1200]/20 text-[#1E1200] focus:outline-none focus:border-[#1E1200] transition-all text-sm font-medium"
+                        className="flex-shrink-0 px-3 py-3.5 rounded-xl bg-white/60 border-2 border-[#1E1200]/20 text-[#1E1200] focus:outline-none focus:border-[#1E1200] transition-all text-sm font-medium"
                       >
                         {CODURI_TARI.map(({ cod }) => (
                           <option key={cod} value={cod}>{cod}</option>
@@ -439,7 +439,7 @@ export default function PaginaRezervari() {
                           }
                           setForm({ ...form, telefon: formatat });
                         }}
-                        className="flex-1 px-5 py-3.5 rounded-xl bg-white/60 border-2 border-[#1E1200]/20 text-[#1E1200] placeholder-[#3B2507]/30 focus:outline-none focus:border-[#1E1200] transition-all"
+                        className="flex-1 min-w-0 px-5 py-3.5 rounded-xl bg-white/60 border-2 border-[#1E1200]/20 text-[#1E1200] placeholder-[#3B2507]/30 focus:outline-none focus:border-[#1E1200] transition-all"
                       />
                     </div>
                   </div>
