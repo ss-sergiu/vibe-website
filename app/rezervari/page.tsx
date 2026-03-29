@@ -373,7 +373,7 @@ export default function PaginaRezervari() {
                 <div className="flex flex-col gap-4">
                   {/* Nume */}
                   <div>
-                    <label className="block text-[#3B2507] text-sm font-medium mb-1.5">Nume complet *</label>
+                    <label className="block text-[#3B2507] text-sm font-medium mb-1.5 pl-1">Nume complet *</label>
                     <input
                       type="text"
                       ref={numeRef}
@@ -386,7 +386,7 @@ export default function PaginaRezervari() {
 
                   {/* Email */}
                   <div>
-                    <label className="block text-[#3B2507] text-sm font-medium mb-1.5">Email *</label>
+                    <label className="block text-[#3B2507] text-sm font-medium mb-1.5 pl-1">Email *</label>
                     <input
                       type="email"
                       ref={emailRef}
@@ -405,7 +405,7 @@ export default function PaginaRezervari() {
 
                   {/* Telefon cu selector cod țară */}
                   <div>
-                    <label className="block text-[#3B2507] text-sm font-medium mb-1.5">Telefon *</label>
+                    <label className="block text-[#3B2507] text-sm font-medium mb-1.5 pl-1">Telefon *</label>
                     <div className="flex gap-2">
                       <select
                         value={codTara}
@@ -446,7 +446,7 @@ export default function PaginaRezervari() {
 
                   {/* Număr persoane */}
                   <div>
-                    <label className="block text-[#3B2507] text-sm font-medium mb-1.5">Număr persoane</label>
+                    <label className="block text-[#3B2507] text-sm font-medium mb-1.5 pl-1">Număr persoane</label>
                     <div className="flex items-center gap-4">
                       <button
                         type="button"
