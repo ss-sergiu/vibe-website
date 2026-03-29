@@ -87,6 +87,7 @@ export async function trimiteEmailRezervare({
     to: email,
     subject: 'Cerere rezervare Vibe Caffè',
     html: emailLayout(content),
+    click_tracking: false,
   });
 }
 
@@ -122,6 +123,7 @@ export async function trimiteEmailAdmin({
     to: adminEmail,
     subject: `Rezervare nouă — ${nume}, ${data} ${ora}`,
     html: emailLayout(content),
+    click_tracking: false,
   });
 }
 
@@ -146,7 +148,7 @@ export async function trimiteEmailStatus({
 
   if (status === 'confirmată') {
     mesajExtra = `<p style="margin:0;color:${BRUN_TEXT};font-size:15px;line-height:1.6">Te așteptăm cu drag la Vibe Caffè.</p>`;
-    butoane = btn('Adaugă în calendar', `${BASE_URL}/api/calendar/${id}`);
+    butoane = btn('Adaugă în calendar', `${BASE_URL}/calendar/${id}`);
   } else if (status === 'respinsă') {
     mesajExtra = `<p style="margin:0;color:#8B1A1A;font-size:15px;line-height:1.6">Te rugăm să alegi o altă dată/oră.</p>`;
     butoane = btn('Fă o altă rezervare', `${BASE_URL}/rezervari`);
@@ -176,5 +178,6 @@ export async function trimiteEmailStatus({
     to: email,
     subject: `Rezervare ${labelStatus} · Vibe Caffè`,
     html: emailLayout(content),
+    click_tracking: false,
   });
 }
