@@ -1,3 +1,55 @@
+## 29.03.2026 — Panou admin, emailuri Resend, calendar ICS
+
+### Ce s-a făcut
+
+**Panou administrare `/admin`**
+- Pagină protejată cu parolă (server-side via `/api/admin/auth`, `ADMIN_PASSWORD` în env)
+- Stats: Total / Așteptare / Confirmate / Respinse
+- Filtre rapide pe status
+- Tabel desktop + carduri mobile
+- 3 butoane de status inline: **Așt. / Conf. / Resp.** — click = schimbare imediată
+- Iconiță trash SVG pentru ștergere cu confirmare în 2 pași
+- Sesiune păstrată în `sessionStorage`
+
+**Emailuri via Resend**
+- Instalat `resend`, configurat `RESEND_API_KEY` local + Vercel
+- `lib/email.ts` — funcții `trimiteEmailRezervare` + `trimiteEmailStatus`
+- La rezervare nouă: email cu detalii + mesaj „O să te anunțăm..."
+- La schimbare status din admin: email cu statut + mesaj specific per status
+  - Confirmată: „Te așteptăm cu drag" + buton **Adaugă în calendar**
+  - Respinsă: text roșu-vișiniu + buton **Fă o altă rezervare**
+  - În așteptare: fără buton
+- Design email: header brun + body crem, colțuri rotunjite, fundal transparent
+- Footer: „Vibe Caffè · București · str. Cafelei nr. 12"
+- Timezone fix: `Europe/Bucharest` + `hour12: false` → ore corecte pe serverul Vercel (UTC)
+
+**Calendar ICS** `/api/calendar/[id]`
+- Descarcă `.ics` cu evenimentul rezervării (durata 1h)
+- `VALARM` cu notificare 1 oră înainte
+- Locație: str. Cafelei nr. 12, București
+
+**Modificări formular rezervări**
+- `autoComplete="name"` / `"email"` / `"tel-national"` pe câmpuri
+- „Confirmă rezervarea" → „Finalizează rezervarea"
+- „Rezervare confirmată!" → „Rezervare finalizată"
+- Mesaj confirmare pe 3 rânduri fără ghilimele la nume
+- Modal: „Nu ai finisat" → „Nu ai finalizat rezervarea!" (font mărit)
+- Ora maximă: 22:00 scoasă, ultimul slot = **21:30** (24 sloturi)
+
+**Supabase**
+- Status „anulată" redenumit în „respinsă" via migrare
+- `lib/supabaseAdmin.ts` — client cu service role pentru operații admin
+
+### Commits
+- `90f5f8e` feat: panou admin rezervări, emailuri Resend, calendar ICS și validări formular
+
+### Decizii importante
+- Parola admin: `vibe2026` (schimbabilă din `.env.local` → `ADMIN_PASSWORD`)
+- Emailurile vin de la `onboarding@resend.dev` (fără domeniu verificat); pentru producție se verifică domeniul în Resend
+- Timezone explicit în email pentru a evita decalajul UTC vs Romania
+
+---
+
 ## 29.03.2026 — UX mobile pagina rezervări + validări formular
 
 ### Ce s-a făcut

@@ -90,6 +90,41 @@ export async function trimiteEmailRezervare({
   });
 }
 
+export async function trimiteEmailAdmin({
+  email, nume, telefon, data_ora, nr_persoane,
+}: {
+  email: string; nume: string; telefon: string; data_ora: string; nr_persoane: number;
+}) {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (!adminEmail) return;
+
+  const { zi, data, ora } = formatDataOra(data_ora);
+  const persoane = `${nr_persoane} ${nr_persoane === 1 ? 'persoană' : 'persoane'}`;
+
+  const content = `
+    <h2 style="margin:0 0 16px;color:${BRUN};font-size:18px;font-weight:700">
+      Rezervare nouă
+    </h2>
+    <p style="margin:0 0 14px;color:${BRUN_TEXT};font-size:16px;line-height:1.6">
+      <strong>${nume}</strong> a cerut o rezervare pentru
+      <strong>${zi}</strong>, <strong>${data}</strong> la <strong>${ora}</strong>, <strong>${persoane}</strong>.
+    </p>
+    <table style="width:100%;border-collapse:collapse;margin-top:8px">
+      <tr><td style="padding:6px 0;color:${BRUN_TEXT};opacity:0.6;font-size:13px;width:90px">Email</td><td style="padding:6px 0;color:${BRUN_TEXT};font-size:14px">${email}</td></tr>
+      <tr><td style="padding:6px 0;color:${BRUN_TEXT};opacity:0.6;font-size:13px">Telefon</td><td style="padding:6px 0;color:${BRUN_TEXT};font-size:14px">${telefon}</td></tr>
+      <tr><td style="padding:6px 0;color:${BRUN_TEXT};opacity:0.6;font-size:13px">Persoane</td><td style="padding:6px 0;color:${BRUN_TEXT};font-size:14px">${persoane}</td></tr>
+    </table>
+    ${btn('Vezi în panou admin', `${BASE_URL}/admin`)}
+  `;
+
+  await resend.emails.send({
+    from: FROM,
+    to: adminEmail,
+    subject: `Rezervare nouă — ${nume}, ${data} ${ora}`,
+    html: emailLayout(content),
+  });
+}
+
 export async function trimiteEmailStatus({
   id, email, nume, data_ora, nr_persoane, status,
 }: {
