@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-const FROM = 'Vibe Caffè <ss.tornea@gmail.com>';
+const FROM = process.env.GMAIL_FROM ?? 'Vibe Caffè <ss.tornea@gmail.com>';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://vibe-website-pied.vercel.app';
 
 const BRUN = '#2C1810';
