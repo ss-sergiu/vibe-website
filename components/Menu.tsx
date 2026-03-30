@@ -20,11 +20,13 @@ export default function Menu() {
       if (Array.isArray(cat.data)) {
         const ordered = (cat.data as Categorie[]).map(c => c.name);
         // Append any product categories not yet in the categorii table
-        const extra = [...new Set((produse.data ?? []).map((i: MenuItem) => i.category))]
-          .filter((c: string) => !ordered.includes(c));
-        setCategories([...ordered, ...extra as string[]]);
+        const produseItems = (produse.data ?? []) as MenuItem[];
+        const allCats = produseItems.map(i => i.category);
+        const extra = [...new Set(allCats)].filter(c => !ordered.includes(c));
+        setCategories([...ordered, ...extra]);
       } else if (Array.isArray(produse.data)) {
-        setCategories([...new Set(produse.data.map((i: MenuItem) => i.category))]);
+        const produseItems = produse.data as MenuItem[];
+        setCategories([...new Set(produseItems.map(i => i.category))]);
       }
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
