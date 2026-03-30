@@ -102,7 +102,7 @@ export default function PaginaRezervari() {
   const [form, setForm] = useState({ nume: '', email: '', telefon: '', nr_persoane: 2 });
   const [codTara, setCodTara] = useState('+40');
   const [emailAtins, setEmailAtins] = useState(false);
-  const [emailSugestie, setEmailSugestie] = useState<string | null>(null);
+  const [emailSugestie, setEmailSugestie] = useState<import('@/lib/email-typos').EmailSugestie | null>(null);
   const [telefonAtins, setTelefonAtins] = useState(false);
   const [loading, setLoading] = useState(false);
   const [succes, setSucces] = useState(false);
@@ -468,13 +468,26 @@ export default function PaginaRezervari() {
                     {emailEroare && (
                       <p className="mt-1 text-red-600 text-xs">Introduceți un email valid, ex:<br />ion@mail.com</p>
                     )}
-                    {!emailEroare && emailSugestie && (
+                    {!emailEroare && emailSugestie && emailSugestie.tip === 'unic' && (
                       <div className="mt-1.5 flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-                        <span className="text-amber-700 text-xs">Ai vrut să spui <strong>{emailSugestie}</strong>?</span>
-                        <button type="button" onClick={() => { setForm({ ...form, email: emailSugestie }); setEmailSugestie(null); }}
+                        <span className="text-amber-700 text-xs">Ai vrut să spui <strong>{emailSugestie.email}</strong>?</span>
+                        <button type="button" onClick={() => { setForm({ ...form, email: emailSugestie.email }); setEmailSugestie(null); }}
                           className="ml-auto text-xs font-semibold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2 py-0.5 rounded-md transition-all whitespace-nowrap">
                           Corectează
                         </button>
+                      </div>
+                    )}
+                    {!emailEroare && emailSugestie && emailSugestie.tip === 'multiplu' && (
+                      <div className="mt-1.5 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                        <p className="text-amber-700 text-xs mb-1.5">Alege adresa corectă:</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {emailSugestie.variante.map(v => (
+                            <button key={v} type="button" onClick={() => { setForm({ ...form, email: v }); setEmailSugestie(null); }}
+                              className="text-xs font-semibold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2.5 py-1 rounded-md transition-all whitespace-nowrap">
+                              {v}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>

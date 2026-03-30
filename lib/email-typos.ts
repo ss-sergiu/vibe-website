@@ -34,6 +34,8 @@ export const DOMENII_CORECTE: string[] = [
   'googlemail.com',
   'mail.md',
   'inbox.ru',
+  'vk.com',
+  'vk.ru',
 ];
 
 // ─── Typo-uri cunoscute explicit ──────────────────────────────────────────────
@@ -47,7 +49,6 @@ export const TYPOS_CUNOSCUTE: Record<string, string> = {
   'gamil.com':     'gmail.com',
   'gmai.com':      'gmail.com',
   'gmali.com':     'gmail.com',
-  'gmail.ru':      'gmail.com',
   'gmail.con':     'gmail.com',
   'gmail.ocm':     'gmail.com',
   'gmail.cmo':     'gmail.com',
@@ -92,6 +93,32 @@ export const TYPOS_CUNOSCUTE: Record<string, string> = {
   // ── Mail.ru ──
   'mail.con':      'mail.ru',
   'mial.ru':       'mail.ru',
+  'maill.ru':      'mail.ru',
+  'mailr.com':     'mail.ru',
+  'mailr':         'mail.ru',
+  'maul.ru':       'mail.ru',
+
+  // ── Gmail (continuare) ──
+  'gai.com':       'gmail.com',
+  'gim.com':       'gmail.com',
+  'gamail.com':    'gmail.com',
+  'maqil.com':     'gmail.com',
+
+  // ── iCloud (continuare) ──
+  'gloud.com':     'icloud.com',
+
+  // ── Yandex ──
+  'iandex.com':    'yandex.com',
+  'iandex.ru':     'yandex.ru',
+  'yandex.eu':     'yandex.com',
+
+  // ── Inbox.ru ──
+  'inboox.ru':     'inbox.ru',
+  'inboox.com':    'inbox.ru',
+
+
+  // ── Hotmail (continuare) ──
+  'hotmeil.com':   'hotmail.com',
 
   // ── TLD generice greșite ──
   'gmail.vom':     'gmail.com',
@@ -114,12 +141,24 @@ function levenshtein(a: string, b: string): number {
   return dp[m][n];
 }
 
+// ─── Domenii ambigue (oferă mai multe variante) ───────────────────────────────
+// Adaugă oricând: 'domeniu.com': ['varianta1.com', 'varianta2.com'],
+export const DOMENII_AMBIGUE: Record<string, string[]> = {
+  'mail.com':  ['gmail.com', 'mail.ru'],
+  'gmail.ru':  ['gmail.com', 'mail.ru'],
+};
+
+export type EmailSugestie =
+  | { tip: 'unic';    email: string }
+  | { tip: 'multiplu'; variante: string[] };
+
 // ─── Funcție principală ───────────────────────────────────────────────────────
 /**
- * Returnează sugestia corectă pentru un email cu typo, sau null dacă e ok.
- * Ex: suggestEmailCorrection('ion@gmial.com') → 'ion@gmail.com'
+ * Returnează sugestia pentru un email cu typo, sau null dacă e ok.
+ * - { tip: 'unic', email } — o singură corecție clară
+ * - { tip: 'multiplu', variante } — mai multe opțiuni posibile
  */
-export function suggestEmailCorrection(email: string): string | null {
+export function suggestEmailCorrection(email: string): EmailSugestie | null {
   const atIdx = email.lastIndexOf('@');
   if (atIdx < 1) return null;
 
@@ -128,15 +167,20 @@ export function suggestEmailCorrection(email: string): string | null {
 
   if (!domain.includes('.')) return null;
 
-  // 1. Verifică typo-uri explicite
-  if (TYPOS_CUNOSCUTE[domain]) {
-    return `${local}@${TYPOS_CUNOSCUTE[domain]}`;
+  // 1. Verifică domenii ambigue
+  if (DOMENII_AMBIGUE[domain]) {
+    return { tip: 'multiplu', variante: DOMENII_AMBIGUE[domain].map(d => `${local}@${d}`) };
   }
 
-  // 2. Dacă domeniul e deja corect, nu sugera nimic
+  // 2. Verifică typo-uri explicite
+  if (TYPOS_CUNOSCUTE[domain]) {
+    return { tip: 'unic', email: `${local}@${TYPOS_CUNOSCUTE[domain]}` };
+  }
+
+  // 3. Dacă domeniul e deja corect, nu sugera nimic
   if (DOMENII_CORECTE.includes(domain)) return null;
 
-  // 3. Fuzzy matching — caută cel mai apropiat domeniu cunoscut
+  // 4. Fuzzy matching — caută cel mai apropiat domeniu cunoscut
   let bestDomain = '';
   let bestDist = Infinity;
   for (const known of DOMENII_CORECTE) {
