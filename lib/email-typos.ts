@@ -190,7 +190,7 @@ export function suggestEmailCorrection(email: string): EmailSugestie | null {
 
   // Sugerează doar dacă distanța e ≤ 2 (1-2 caractere diferite)
   if (bestDist <= 2 && bestDomain) {
-    return `${local}@${bestDomain}`;
+    return { tip: 'unic', email: `${local}@${bestDomain}` };
   }
 
   return null;
