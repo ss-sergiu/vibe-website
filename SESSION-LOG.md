@@ -1,3 +1,44 @@
+## 30.03.2026 — Font DM Serif Display + îmbunătățiri emailuri și admin
+
+### Ce s-a făcut
+
+**Font DM Serif Display**
+- Adăugat `DM_Serif_Display` via `next/font/google` în `layout.tsx` (subseturi `latin` + `latin-ext`)
+- Clasă CSS `.font-dm-serif` definită în `globals.css` (fallback: Georgia, serif)
+- Aplicat pe toate titlurile h1/h2/h3/h4 din: Hero, Features, Menu, Contact, Rezervări, Admin
+- Aplicat pe logo „Vibe Coffee" în navigație
+- Aplicat pe logo „Vibe Caffè" în pagina `/calendar/[id]` (inline style)
+- Aplicat pe logo „Vibe Caffè" în emailuri (via Google Fonts import în `<head>`)
+- Titlu Hero schimbat: „Rezervă o masă" → „Fă o rezervare"
+
+**Îmbunătățiri emailuri**
+- Logo „Vibe Caffè" în header email: font DM Serif Display, 22px
+- Prima propoziție din emailul client: format schimbat din `Zi, dată · oră` în `Zi · dată · oră`, mărime mărită la 24px
+- Toate h2-urile din emailuri mărite la 24px
+- Lățime container email mărită: 480px → 600px (standard universal)
+
+**Formular rezervări**
+- Codul `+373` (Moldova) mutat pe locul 2 în selectorul de țări
+
+**Panou admin**
+- „Rezervări" — font DM Serif Display aplicat
+- Parolă admin actualizată local (`.env.local`): `vibe2026` → `vibe2026-2021`
+
+### Ce rămâne
+- [ ] Verificare font în toate clienții de email (Gmail nu încarcă Google Fonts)
+
+### Commits
+- `3cab04d` style: add DM Serif Display font to headings, emails, and admin panel
+- `675547e` style: improve email layout and update reservation form country order
+
+### Decizii importante
+- Sintaxa arbitrară Tailwind `font-[family-name:var(--font-dm-serif)]` nu a funcționat din cauza unui `@theme` circular — rezolvat cu clasă CSS directă `.font-dm-serif`
+- DM Serif Display are un singur weight (400) — `font-bold` scos de pe toate elementele cu acest font
+- 600px lățime email = standard universal; procentele nu funcționează consistent în clienții de email
+- Google Fonts în emailuri funcționează în Apple Mail / iOS Mail; Gmail și Outlook afișează fallback Georgia
+
+---
+
 ## 29.03.2026 — Panou admin, emailuri Resend, calendar ICS
 
 ### Ce s-a făcut
