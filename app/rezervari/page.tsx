@@ -22,6 +22,42 @@ const CODURI_TARI = [
   { cod: '+34', tara: 'Spania',  flag: '🇪🇸' },
 ];
 
+// Normalizează numărul de telefon la autofill: elimină codul de țară și 0-ul din față
+function normalizeTelefon(raw: string, cod: string): string {
+  let digits = raw.replace(/\D/g, '');
+  // Elimină codul de țară dacă e prezent (fără +)
+  const codDigits = cod.replace(/\D/g, '');
+  if (digits.startsWith(codDigits) && digits.length > codDigits.length) {
+    digits = digits.slice(codDigits.length);
+  } else {
+    // Încearcă să elimine orice cod de țară cunoscut
+    for (const { cod: c } of CODURI_TARI) {
+      const cd = c.replace(/\D/g, '');
+      if (digits.startsWith(cd) && digits.length > cd.length + 6) {
+        digits = digits.slice(cd.length);
+        break;
+      }
+    }
+  }
+  // Elimină 0-ul din față dacă există
+  if (digits.startsWith('0')) digits = digits.slice(1);
+  return digits;
+}
+
+function formatTelefon(digits: string, cod: string): string {
+  const maxCifre = cod === '+373' ? 8 : 9;
+  const taiat = digits.slice(0, maxCifre);
+  if (cod === '+373') {
+    if (taiat.length <= 2) return taiat;
+    if (taiat.length <= 5) return taiat.slice(0, 2) + ' ' + taiat.slice(2);
+    return taiat.slice(0, 2) + ' ' + taiat.slice(2, 5) + ' ' + taiat.slice(5);
+  } else {
+    if (taiat.length <= 3) return taiat;
+    if (taiat.length <= 6) return taiat.slice(0, 3) + ' ' + taiat.slice(3);
+    return taiat.slice(0, 3) + ' ' + taiat.slice(3, 6) + ' ' + taiat.slice(6);
+  }
+}
+
 const azi = new Date();
 const aziStr = azi.toISOString().split('T')[0];
 
@@ -80,7 +116,9 @@ export default function PaginaRezervari() {
   const emailEroare = emailAtins && form.email && !emailValid;
   const cifreTelefon = form.telefon.replace(/\D/g, '').length;
   const cifreNecesare = codTara === '+373' ? 8 : 9;
-  const telefonEroare = telefonAtins && form.telefon && cifreTelefon !== cifreNecesare;
+  const primaCifra = form.telefon.replace(/\D/g, '')[0];
+  const telefonStartValid = codTara !== '+373' || !primaCifra || primaCifra === '6' || primaCifra === '7';
+  const telefonEroare = telefonAtins && form.telefon && (cifreTelefon !== cifreNecesare || !telefonStartValid);
 
   useEffect(() => {
     if (pas !== 3) return;
@@ -126,7 +164,13 @@ export default function PaginaRezervari() {
         body: JSON.stringify({
           ...form,
           telefon: `${codTara} ${form.telefon}`,
-          data_ora: `${data}T${ora}:00`,
+          data_ora: (() => {
+            const off = new Date().getTimezoneOffset(); // minute, negativ pt UTC+
+            const sign = off <= 0 ? '+' : '-';
+            const hh = String(Math.floor(Math.abs(off) / 60)).padStart(2, '0');
+            const mm = String(Math.abs(off) % 60).padStart(2, '0');
+            return `${data}T${ora}:00${sign}${hh}:${mm}`;
+          })(),
         }),
       });
       const json = await res.json();
@@ -334,19 +378,28 @@ export default function PaginaRezervari() {
                   {new Date(data).toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' })}
                 </p>
                 <div className="grid grid-cols-4 gap-3">
-                  {ORE_DISPONIBILE.map(h => (
-                    <button
-                      key={h}
-                      onClick={() => setOra(h)}
-                      className={`py-3 rounded-xl font-semibold text-sm border-2 transition-all duration-200 ${
-                        ora === h
-                          ? `bg-[#1E1200] ${borderActiv} text-[#F5E6C8] scale-105`
-                          : `bg-transparent ${borderInactiv} text-[#3B2507] hover:scale-105`
-                      }`}
-                    >
-                      {h}
-                    </button>
-                  ))}
+                  {ORE_DISPONIBILE.map(h => {
+                    const eAzi = data === aziStr;
+                    const [hh, mm] = h.split(':').map(Number);
+                    const acum = new Date();
+                    const oraTrecuta = eAzi && (hh < acum.getHours() || (hh === acum.getHours() && mm <= acum.getMinutes()));
+                    return (
+                      <button
+                        key={h}
+                        onClick={() => !oraTrecuta && setOra(h)}
+                        disabled={oraTrecuta}
+                        className={`py-3 rounded-xl font-semibold text-sm border-2 transition-all duration-200 ${
+                          oraTrecuta
+                            ? 'bg-[#1E1200]/5 border-[#1E1200]/10 text-[#1E1200]/25 cursor-not-allowed line-through'
+                            : ora === h
+                              ? `bg-[#1E1200] ${borderActiv} text-[#F5E6C8] scale-105`
+                              : `bg-transparent ${borderInactiv} text-[#3B2507] hover:scale-105`
+                        }`}
+                      >
+                        {h}
+                      </button>
+                    );
+                  })}
                 </div>
                 <div className="flex gap-3 mt-6">
                   <button
@@ -429,22 +482,8 @@ export default function PaginaRezervari() {
                         autoComplete="tel-national"
                         value={form.telefon}
                         onChange={e => {
-                          const cifre = e.target.value.replace(/\D/g, '');
-                          const maxCifre = codTara === '+373' ? 8 : 9;
-                          const taiat = cifre.slice(0, maxCifre);
-                          let formatat = '';
-                          if (codTara === '+373') {
-                            // XX XXX XXX
-                            if (taiat.length <= 2) formatat = taiat;
-                            else if (taiat.length <= 5) formatat = taiat.slice(0, 2) + ' ' + taiat.slice(2);
-                            else formatat = taiat.slice(0, 2) + ' ' + taiat.slice(2, 5) + ' ' + taiat.slice(5);
-                          } else {
-                            // XXX XXX XXX
-                            if (taiat.length <= 3) formatat = taiat;
-                            else if (taiat.length <= 6) formatat = taiat.slice(0, 3) + ' ' + taiat.slice(3);
-                            else formatat = taiat.slice(0, 3) + ' ' + taiat.slice(3, 6) + ' ' + taiat.slice(6);
-                          }
-                          setForm({ ...form, telefon: formatat });
+                          const normalized = normalizeTelefon(e.target.value, codTara);
+                          setForm({ ...form, telefon: formatTelefon(normalized, codTara) });
                         }}
                         onBlur={() => setTelefonAtins(true)}
                         className={`flex-1 min-w-0 px-5 py-3.5 rounded-xl bg-white/60 border-2 text-[#1E1200] placeholder-[#3B2507]/30 focus:outline-none transition-all ${
@@ -453,7 +492,9 @@ export default function PaginaRezervari() {
                       />
                     </div>
                     {telefonEroare && (
-                      <p className="mt-1 text-red-600 text-xs pl-1">Introduceți {cifreNecesare} cifre</p>
+                      <p className="mt-1 text-red-600 text-xs pl-1">
+                        {!telefonStartValid ? 'Numărul trebuie să înceapă cu 6 sau 7' : `Introduceți ${cifreNecesare} cifre`}
+                      </p>
                     )}
                   </div>
 

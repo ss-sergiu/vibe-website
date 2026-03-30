@@ -107,12 +107,16 @@ export default function AdminPage() {
   const [deletingProdId, setDeletingProdId] = useState<number | null>(null);
   const [confirmDeleteProd, setConfirmDeleteProd] = useState<number | null>(null);
   const [filterCat, setFilterCat] = useState<string>('toate');
+  const [searchProd, setSearchProd] = useState('');
+  const [sortProd, setSortProd] = useState<{ field: 'name' | 'category' | 'price'; dir: 'asc' | 'desc' }>({ field: 'name', dir: 'asc' });
 
   // Categorii
   const [categoriiDB, setCategoriiDB] = useState<Categorie[]>([]);
   const [renameCat, setRenameCat] = useState<number | null>(null);
   const [renameCatVal, setRenameCatVal] = useState('');
   const [savingCat, setSavingCat] = useState(false);
+  const [newCatName, setNewCatName] = useState('');
+  const [addingCat, setAddingCat] = useState(false);
 
   useEffect(() => {
     if (sessionStorage.getItem('adminOk') === '1') setAutentificat(true);
@@ -205,7 +209,24 @@ export default function AdminPage() {
     const extra = [...new Set(produse.map(p => p.category))].filter(c => !ordered.includes(c));
     return [...ordered, ...extra];
   }, [categoriiDB, produse]);
-  const filteredProd = useMemo(() => filterCat === 'toate' ? produse : produse.filter(p => p.category === filterCat), [produse, filterCat]);
+  function toggleSortProd(field: typeof sortProd.field) {
+    setSortProd(s => ({ field, dir: s.field === field && s.dir === 'asc' ? 'desc' : 'asc' }));
+  }
+
+  const filteredProd = useMemo(() => {
+    let r = filterCat === 'toate' ? produse : produse.filter(p => p.category === filterCat);
+    if (searchProd.trim()) {
+      const q = searchProd.toLowerCase();
+      r = r.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q));
+    }
+    r = [...r].sort((a, b) => {
+      const va = sortProd.field === 'price' ? a.price : a[sortProd.field].toLowerCase();
+      const vb = sortProd.field === 'price' ? b.price : b[sortProd.field].toLowerCase();
+      const cmp = va < vb ? -1 : va > vb ? 1 : 0;
+      return sortProd.dir === 'asc' ? cmp : -cmp;
+    });
+    return r;
+  }, [produse, filterCat, searchProd, sortProd]);
 
   function openAdd() { setForm(FORM_INITIAL); setModal('add'); }
   function openEdit(p: Produs) {
@@ -287,6 +308,16 @@ export default function AdminPage() {
       fetch('/api/categorii', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: a.id, sort_order: b.sort_order }) }),
       fetch('/api/categorii', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: b.id, sort_order: a.sort_order }) }),
     ]);
+  }
+
+  async function addCategorie() {
+    if (!newCatName.trim()) return;
+    setAddingCat(true);
+    const res = await fetch('/api/categorii', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newCatName.trim() }) });
+    const json = await res.json();
+    if (json.data?.[0]) setCategoriiDB(prev => [...prev, json.data[0]]);
+    setNewCatName('');
+    setAddingCat(false);
   }
 
   async function deleteCategorie(id: number) {
@@ -578,7 +609,9 @@ export default function AdminPage() {
                   </button>
                 ))}
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
+                <input type="text" placeholder="Caută produs..." value={searchProd} onChange={e => setSearchProd(e.target.value)}
+                  className="px-3 py-2 rounded-lg bg-[#F5E6C8] border-2 border-[#D4B896] text-[#3B2507] text-sm focus:outline-none focus:border-[#3B2507] transition-all placeholder-[#B89878] w-40 md:w-52" />
                 <button onClick={fetchProduse} className="p-2 bg-[#F5E6C8] border border-[#D4B896] text-[#3B2507] hover:bg-[#EDD9AF] rounded-lg transition-all"><IconRefresh /></button>
                 <button onClick={openAdd} className="flex items-center gap-1.5 px-4 py-2 bg-[#3B2507] hover:bg-[#1E1200] text-[#F5E6C8] text-sm font-semibold rounded-xl transition-all">
                   <IconPlus /> Produs nou
@@ -599,9 +632,20 @@ export default function AdminPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-[#EDD9AF] border-b border-[#D4B896]">
-                        {['Imagine', 'Nume', 'Categorie', 'Preț', 'Vegan', ''].map(h => (
-                          <th key={h} className="px-3 py-3 text-left text-[#7A5C3A] font-semibold text-xs uppercase tracking-wider">{h}</th>
+                        <th className="px-3 py-3 text-left text-[#7A5C3A] font-semibold text-xs uppercase tracking-wider">Imagine</th>
+                        {([['Nume', 'name'], ['Categorie', 'category'], ['Preț', 'price']] as [string, typeof sortProd.field][]).map(([h, field]) => (
+                          <th key={h} className="px-3 py-3 text-left text-[#7A5C3A] font-semibold text-xs uppercase tracking-wider">
+                            <button onClick={() => toggleSortProd(field)} className="flex items-center gap-1 hover:text-[#3B2507] transition-colors">
+                              {h}
+                              <span className="flex flex-col leading-none">
+                                <span className={`text-[8px] ${sortProd.field === field && sortProd.dir === 'asc' ? 'text-[#3B2507]' : 'text-[#D4B896]'}`}>▲</span>
+                                <span className={`text-[8px] ${sortProd.field === field && sortProd.dir === 'desc' ? 'text-[#3B2507]' : 'text-[#D4B896]'}`}>▼</span>
+                              </span>
+                            </button>
+                          </th>
                         ))}
+                        <th className="px-3 py-3 text-left text-[#7A5C3A] font-semibold text-xs uppercase tracking-wider">Vegan</th>
+                        <th className="px-3 py-3"></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -684,6 +728,19 @@ export default function AdminPage() {
         {/* ══ TAB: CATEGORII ══ */}
         {tab === 'categorii' && (
           <>
+            <div className="flex gap-2 mb-4">
+              <input
+                value={newCatName}
+                onChange={e => setNewCatName(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') addCategorie(); }}
+                placeholder="Nume categorie nouă..."
+                className="flex-1 px-3 py-2 rounded-xl bg-[#F5E6C8] border-2 border-[#D4B896] text-[#3B2507] text-sm focus:outline-none focus:border-[#3B2507] transition-all placeholder-[#B89878]"
+              />
+              <button onClick={addCategorie} disabled={addingCat || !newCatName.trim()}
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#3B2507] hover:bg-[#1E1200] disabled:opacity-50 text-[#F5E6C8] text-sm font-semibold rounded-xl transition-all">
+                <IconPlus /> {addingCat ? 'Se adaugă...' : 'Categorie nouă'}
+              </button>
+            </div>
             <div className="bg-[#F5E6C8] border border-[#D4B896] rounded-2xl overflow-hidden shadow-sm">
               {loadingProd ? (
                 <p className="text-[#7A5C3A] text-center py-12">Se încarcă...</p>

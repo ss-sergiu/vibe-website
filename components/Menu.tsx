@@ -106,7 +106,7 @@ export default function Menu() {
     <section id="meniu" ref={sectionRef} className="py-20 px-6 bg-[#1C0F07]">
 
       {/* TAB-URI STICKY */}
-      <div style={{ top: navHeight }} className={`fixed left-0 right-0 z-40 bg-[#1C0F07]/95 backdrop-blur-md shadow-lg py-2 px-6 transition-all duration-300 ${
+      <div style={{ top: navHeight }} className={`fixed left-0 right-0 z-40 bg-[#1C0F07]/95 backdrop-blur-md shadow-lg py-2 px-6 overflow-hidden transition-all duration-300 ${
         showSticky ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
       }`}>
         <div ref={stickyTabsRef} className="max-w-7xl mx-auto flex gap-3 overflow-x-auto scrollbar-none">
