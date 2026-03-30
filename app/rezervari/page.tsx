@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Navigation from '@/components/Navigation';
 import FooterStarter from '@/components/FooterStarter';
+import { suggestEmailCorrection } from '@/lib/email-typos';
 
 const ORE_DISPONIBILE = Array.from({ length: 24 }, (_, i) => {
   const totalMinute = 10 * 60 + i * 30;
@@ -101,6 +102,7 @@ export default function PaginaRezervari() {
   const [form, setForm] = useState({ nume: '', email: '', telefon: '', nr_persoane: 2 });
   const [codTara, setCodTara] = useState('+40');
   const [emailAtins, setEmailAtins] = useState(false);
+  const [emailSugestie, setEmailSugestie] = useState<string | null>(null);
   const [telefonAtins, setTelefonAtins] = useState(false);
   const [loading, setLoading] = useState(false);
   const [succes, setSucces] = useState(false);
@@ -424,7 +426,7 @@ export default function PaginaRezervari() {
               <div>
                 <h2 className="font-dm-serif text-2xl text-[#1E1200] mb-1">Date importante</h2>
                 <p className="text-[#3B2507]/60 mb-6 text-base">
-                  {new Date(data).toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' })} · ora {ora}
+                  {new Date(data).toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' })} · ora <strong className="text-[#1E1200]">{ora}</strong><br />{form.nr_persoane} {form.nr_persoane === 1 ? 'persoană' : 'persoane'}
                 </p>
 
                 <div className="flex flex-col gap-4">
@@ -451,14 +453,29 @@ export default function PaginaRezervari() {
                       placeholder="ion@email.com"
                       autoComplete="email"
                       value={form.email}
-                      onChange={e => setForm({ ...form, email: e.target.value })}
-                      onBlur={() => setEmailAtins(true)}
+                      onChange={e => {
+                        setForm({ ...form, email: e.target.value });
+                        setEmailSugestie(null);
+                      }}
+                      onBlur={() => {
+                        setEmailAtins(true);
+                        setEmailSugestie(suggestEmailCorrection(form.email));
+                      }}
                       className={`w-full px-5 py-3.5 rounded-xl bg-white/60 border-2 text-[#1E1200] placeholder-[#3B2507]/30 focus:outline-none transition-all ${
-                        emailEroare ? 'border-red-400 focus:border-red-500' : 'border-[#1E1200]/20 focus:border-[#1E1200]'
+                        emailEroare ? 'border-red-400 focus:border-red-500' : emailSugestie ? 'border-amber-400 focus:border-amber-500' : 'border-[#1E1200]/20 focus:border-[#1E1200]'
                       }`}
                     />
                     {emailEroare && (
                       <p className="mt-1 text-red-600 text-xs">Introduceți un email valid, ex:<br />ion@mail.com</p>
+                    )}
+                    {!emailEroare && emailSugestie && (
+                      <div className="mt-1.5 flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                        <span className="text-amber-700 text-xs">Ai vrut să spui <strong>{emailSugestie}</strong>?</span>
+                        <button type="button" onClick={() => { setForm({ ...form, email: emailSugestie }); setEmailSugestie(null); }}
+                          className="ml-auto text-xs font-semibold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2 py-0.5 rounded-md transition-all whitespace-nowrap">
+                          Corectează
+                        </button>
+                      </div>
                     )}
                   </div>
 

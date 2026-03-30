@@ -124,7 +124,7 @@ export default async function CalendarPage({
             Adaugă în calendar
           </h1>
           <p style={{ margin: '0 0 24px', color: BRUN, opacity: 0.65, fontSize: '14px', lineHeight: 1.5 }}>
-            {zi}, {dataFormatata} · {ora} · {persoane}
+            {zi}, {dataFormatata} · <strong style={{ color: BRUN, fontWeight: 700 }}>{ora}</strong><br />{persoane}
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
