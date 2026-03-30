@@ -3,44 +3,46 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
-type MenuItem = { name: string; price: number; category: string; description: string; image: string; objectPosition?: string };
-
-const menuItems: MenuItem[] = [
-  // Espresso
-  { name: 'Espresso', price: 12, category: 'Espresso', description: 'Shot dublu de espresso intens', image: 'https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=400&auto=format&fit=crop' },
-  { name: 'Americano', price: 14, category: 'Espresso', description: 'Espresso diluat cu apă caldă', image: 'https://images.unsplash.com/photo-1551030173-122aabc4489c?w=400&auto=format&fit=crop' },
-  { name: 'Cappuccino', price: 16, category: 'Espresso', description: 'Espresso cu lapte spumat catifelat', image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&auto=format&fit=crop' },
-  { name: 'Flat White', price: 17, category: 'Espresso', description: 'Microfoam mătăsos peste espresso', image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?w=400&auto=format&fit=crop' },
-  { name: 'Latte', price: 18, category: 'Espresso', description: 'Espresso cu lapte cald și foam ușor', image: 'https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=400&auto=format&fit=crop' },
-  { name: 'Cortado', price: 15, category: 'Espresso', description: 'Espresso tăiat cu lapte cald 1:1', image: 'https://images.unsplash.com/photo-1519532059956-a63a37af5deb?w=800&auto=format&fit=crop&q=90', objectPosition: 'center 30%' },
-
-  // Specialty
-  { name: 'Pourover V60', price: 22, category: 'Specialty', description: 'Extracție manuală, single origin Etiopia', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&auto=format&fit=crop' },
-  { name: 'AeroPress', price: 20, category: 'Specialty', description: 'Corp plin, presiune controlată', image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&auto=format&fit=crop' },
-  { name: 'Chemex', price: 24, category: 'Specialty', description: 'Filtru gros, claritate maximă în cană', image: 'https://images.unsplash.com/photo-1516743619420-154b70a65fea?w=400&auto=format&fit=crop' },
-  { name: 'Batch Brew', price: 16, category: 'Specialty', description: 'Filter coffee proaspăt, rotit la 2h', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&auto=format&fit=crop' },
-
-  // Cold Brew
-  { name: 'Cold Brew Classic', price: 18, category: 'Cold Brew', description: 'Infuzie la rece 18h, servit cu gheață', image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&auto=format&fit=crop' },
-  { name: 'Cold Brew Tonic', price: 22, category: 'Cold Brew', description: 'Cold brew cu apă tonică și lime', image: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400&auto=format&fit=crop' },
-  { name: 'Iced Latte', price: 20, category: 'Cold Brew', description: 'Espresso răcit cu lapte și gheață', image: 'https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?w=400&auto=format&fit=crop' },
-  { name: 'Nitro Cold Brew', price: 24, category: 'Cold Brew', description: 'Cold brew infuzat cu azot, cremos', image: 'https://images.unsplash.com/photo-1587734195503-904fca47e0e9?w=400&auto=format&fit=crop' },
-
-  // Patiserie
-  { name: 'Croissant simplu', price: 12, category: 'Patiserie', description: 'Unt franțuzesc, crocant la exterior', image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&auto=format&fit=crop' },
-  { name: 'Pain au chocolat', price: 14, category: 'Patiserie', description: 'Aluat foietaj cu ciocolată belgiană', image: 'https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400&auto=format&fit=crop' },
-  { name: 'Banana bread', price: 16, category: 'Patiserie', description: 'Rețetă proprie, fără zahăr rafinat', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&auto=format&fit=crop' },
-  { name: 'Cheesecake', price: 22, category: 'Patiserie', description: 'Cremă Philadelphia, bază biscuiți', image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=400&auto=format&fit=crop' },
-];
-
-const categories = ['Espresso', 'Specialty', 'Cold Brew', 'Patiserie'];
+type MenuItem = { id: number; name: string; price: number; category: string; description: string; image: string; vegan?: boolean; ingredients?: string };
+type Categorie = { id: number; name: string; sort_order: number };
 
 export default function Menu() {
-  const [activeCategory, setActiveCategory] = useState('Espresso');
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/produse').then(r => r.json()),
+      fetch('/api/categorii').then(r => r.json()),
+    ]).then(([produse, cat]) => {
+      if (Array.isArray(produse.data)) setMenuItems(produse.data);
+      if (Array.isArray(cat.data)) {
+        const ordered = (cat.data as Categorie[]).map(c => c.name);
+        // Append any product categories not yet in the categorii table
+        const extra = [...new Set((produse.data ?? []).map((i: MenuItem) => i.category))]
+          .filter((c: string) => !ordered.includes(c));
+        setCategories([...ordered, ...extra as string[]]);
+      } else if (Array.isArray(produse.data)) {
+        setCategories([...new Set(produse.data.map((i: MenuItem) => i.category))]);
+      }
+    }).catch(() => {}).finally(() => setLoading(false));
+  }, []);
+
+  const [activeCategory, setActiveCategory] = useState('');
+
+  useEffect(() => {
+    if (categories.length > 0 && !categories.includes(activeCategory)) {
+      setActiveCategory(categories[0]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categories]);
+
   const [showSticky, setShowSticky] = useState(false);
   const [navHeight, setNavHeight] = useState(64);
   const sectionRef = useRef<HTMLElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
+  const stickyTabsRef = useRef<HTMLDivElement>(null);
   const productsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -64,6 +66,13 @@ export default function Menu() {
     };
   }, []);
 
+  // Scroll active tab into view in sticky bar
+  useEffect(() => {
+    if (!stickyTabsRef.current) return;
+    const active = stickyTabsRef.current.querySelector('[data-active="true"]') as HTMLElement;
+    if (active) active.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
+  }, [activeCategory, showSticky]);
+
   const handleCategoryClick = (category: string, fromSticky = false) => {
     setActiveCategory(category);
     if (fromSticky && productsRef.current) {
@@ -77,8 +86,9 @@ export default function Menu() {
   const tabButtons = (small = false, fromSticky = false) => categories.map(category => (
     <button
       key={category}
+      data-active={activeCategory === category ? 'true' : 'false'}
       onClick={() => handleCategoryClick(category, fromSticky)}
-      className={`rounded-full font-semibold transition-all duration-300 btn-glow ${
+      className={`rounded-full font-semibold transition-all duration-300 btn-glow shrink-0 ${
         small ? 'px-4 py-1.5 text-sm border' : 'px-6 py-3 border-2'
       } ${
         activeCategory === category
@@ -97,7 +107,7 @@ export default function Menu() {
       <div style={{ top: navHeight }} className={`fixed left-0 right-0 z-40 bg-[#1C0F07]/95 backdrop-blur-md shadow-lg py-2 px-6 transition-all duration-300 ${
         showSticky ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
       }`}>
-        <div className="max-w-7xl mx-auto flex justify-center gap-3">
+        <div ref={stickyTabsRef} className="max-w-7xl mx-auto flex gap-3 overflow-x-auto scrollbar-none">
           {tabButtons(true, true)}
         </div>
       </div>
@@ -109,42 +119,51 @@ export default function Menu() {
           Meniu
         </h2>
 
-        {/* TAB-URI NORMALE */}
-        <div ref={tabsRef} className="flex flex-wrap justify-center gap-3 mb-10">
-          {tabButtons(false)}
-        </div>
-
-        <div ref={productsRef} />
-
-        {/* GRID PRODUSE */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {filtered.map(item => (
-            <div
-              key={item.name}
-              className="bg-[#F5E6C8] rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,230,200,0.3)]"
-            >
-              <div className="overflow-hidden h-48 relative">
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  fill
-                  className="object-cover transition-transform duration-300 hover:scale-110"
-                  style={item.objectPosition ? { objectPosition: item.objectPosition } : undefined}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-              </div>
-              <div className="p-6 flex flex-col flex-1 justify-between">
-                <div>
-                  <h4 className="text-xl font-bold text-[#1E1200] mb-2">{item.name}</h4>
-                  <p className="text-[#3B2507] text-sm leading-relaxed">{item.description}</p>
-                </div>
-                <div className="mt-4">
-                  <span className="text-lg font-bold text-[#1E1200]">{item.price} RON</span>
-                </div>
-              </div>
+        {loading ? (
+          <p className="text-[#F5E6C8]/50 text-center py-16">Se încarcă...</p>
+        ) : menuItems.length === 0 ? (
+          <p className="text-[#F5E6C8]/50 text-center py-16">Meniul nu este disponibil momentan.</p>
+        ) : (
+          <>
+            {/* TAB-URI NORMALE */}
+            <div ref={tabsRef} className="flex flex-wrap justify-center gap-3 mb-10">
+              {tabButtons(false)}
             </div>
-          ))}
-        </div>
+
+            <div ref={productsRef} />
+
+            {/* GRID PRODUSE */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {filtered.map(item => (
+                <div
+                  key={item.id}
+                  className="bg-[#F5E6C8] rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(245,230,200,0.3)]"
+                >
+                  <div className="overflow-hidden h-48 relative bg-[#3B2507]/20">
+                    {item.image ? (
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        className="object-cover transition-transform duration-300 hover:scale-110"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    ) : null}
+                  </div>
+                  <div className="p-6 flex flex-col flex-1 justify-between">
+                    <div>
+                      <h4 className="text-xl font-bold text-[#1E1200] mb-2">{item.name}</h4>
+                      <p className="text-[#3B2507] text-sm leading-relaxed">{item.description}</p>
+                    </div>
+                    <div className="mt-4">
+                      <span className="text-lg font-bold text-[#1E1200]">{item.price} RON</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
       </div>
     </section>
