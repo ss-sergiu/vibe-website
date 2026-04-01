@@ -421,10 +421,10 @@ export default function PaginaRezervari() {
               </div>
             )}
 
-            {/* PAS 3 — Date importante */}
+            {/* PAS 3 — Detalii */}
             {pas === 3 && (
               <div>
-                <h2 className="font-dm-serif text-2xl text-[#1E1200] mb-1">Date importante</h2>
+                <h2 className="font-dm-serif text-2xl text-[#1E1200] mb-1">Detalii</h2>
                 <p className="text-[#3B2507]/60 mb-6 text-base">
                   {new Date(data).toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long' })} · ora <strong className="text-[#1E1200]">{ora}</strong><br />{form.nr_persoane} {form.nr_persoane === 1 ? 'persoană' : 'persoane'}
                 </p>
@@ -470,7 +470,7 @@ export default function PaginaRezervari() {
                     )}
                     {!emailEroare && emailSugestie && emailSugestie.tip === 'unic' && (
                       <div className="mt-1.5 flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-                        <span className="text-amber-700 text-xs">Ai vrut să spui <strong>{emailSugestie.email}</strong>?</span>
+                        <span className="text-amber-700 text-sm">Ai vrut să scrii <strong>{emailSugestie.email}</strong> ?</span>
                         <button type="button" onClick={() => { setForm({ ...form, email: emailSugestie.email }); setEmailSugestie(null); }}
                           className="ml-auto text-xs font-semibold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2 py-0.5 rounded-md transition-all whitespace-nowrap">
                           Corectează
