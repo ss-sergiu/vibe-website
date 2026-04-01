@@ -516,9 +516,9 @@ export default function AdminPage() {
                   <span>Rez.</span>
                   <span>{sortRez.field === 'data_ora' ? (sortRez.dir === 'asc' ? '▲' : '▼') : '⇅'}</span>
                 </button>
-                <input type="text" placeholder="Caută după nume, telefon sau email..."
+                <input type="text" placeholder="Caută nume, telefon sau email"
                   value={searchRez} onChange={e => setSearchRez(e.target.value)}
-                  className="flex-1 px-3 py-1.5 rounded-lg bg-white border-2 border-[#D4B896] text-[#3B2507] text-sm focus:outline-none focus:border-[#3B2507] transition-all placeholder-[#B89878]" />
+                  className="flex-1 min-w-0 px-3 py-1.5 rounded-lg bg-white border-2 border-[#D4B896] text-[#3B2507] text-sm focus:outline-none focus:border-[#3B2507] transition-all placeholder-[#B89878]" />
                 <button onClick={fetchRezervari} className="p-2 bg-[#EDD9AF] border border-[#D4B896] text-[#3B2507] hover:bg-[#D4B896] rounded-lg transition-all flex items-center justify-center">
                   <IconRefresh />
                 </button>
