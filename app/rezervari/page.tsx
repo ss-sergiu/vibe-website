@@ -45,6 +45,20 @@ function normalizeTelefon(raw: string, cod: string): string {
   return digits;
 }
 
+function detectCodTara(raw: string): { cod: string; digits: string } | null {
+  const trimmed = raw.trim();
+  if (!trimmed.startsWith('+')) return null;
+  const sorted = [...CODURI_TARI].sort((a, b) => b.cod.length - a.cod.length);
+  for (const { cod } of sorted) {
+    if (trimmed.startsWith(cod)) {
+      const rest = trimmed.slice(cod.length).replace(/\D/g, '');
+      const digits = rest.startsWith('0') ? rest.slice(1) : rest;
+      return { cod, digits };
+    }
+  }
+  return null;
+}
+
 function formatTelefon(digits: string, cod: string): string {
   const maxCifre = cod === '+373' ? 8 : 9;
   const taiat = digits.slice(0, maxCifre);
@@ -509,11 +523,17 @@ export default function PaginaRezervari() {
                         type="tel"
                         ref={telefonRef}
                         placeholder={codTara === '+373' ? '60 000 000' : '740 000 000'}
-                        autoComplete="tel-national"
+                        autoComplete="tel"
                         value={form.telefon}
                         onChange={e => {
-                          const normalized = normalizeTelefon(e.target.value, codTara);
-                          setForm({ ...form, telefon: formatTelefon(normalized, codTara) });
+                          const detected = detectCodTara(e.target.value);
+                          if (detected) {
+                            setCodTara(detected.cod);
+                            setForm({ ...form, telefon: formatTelefon(detected.digits, detected.cod) });
+                          } else {
+                            const normalized = normalizeTelefon(e.target.value, codTara);
+                            setForm({ ...form, telefon: formatTelefon(normalized, codTara) });
+                          }
                         }}
                         onBlur={() => setTelefonAtins(true)}
                         className={`flex-1 min-w-0 px-5 py-3.5 rounded-xl bg-white/60 border-2 text-[#1E1200] placeholder-[#3B2507]/30 focus:outline-none transition-all ${

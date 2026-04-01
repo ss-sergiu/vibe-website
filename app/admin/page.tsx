@@ -577,7 +577,7 @@ export default function AdminPage() {
                             {colOrder.map(col => {
                               switch (col) {
                                 case 'nume': return <td key={col} className="px-3 py-3 text-[#3B2507] font-semibold whitespace-nowrap">{r.nume}</td>;
-                                case 'contact': return <td key={col} className="px-3 py-3"><div className="text-[#3B2507] text-xs">{r.email}</div><div className="text-[#7A5C3A] text-xs">{r.telefon}</div></td>;
+                                case 'contact': return <td key={col} className="px-3 py-3"><div className="text-[#3B2507] text-xs"><a href={`mailto:${r.email}`} className="no-underline">{r.email}</a></div><div className="text-[#7A5C3A] text-xs"><a href={`tel:${r.telefon.replace(/\s/g, '')}`} className="no-underline">{r.telefon}</a></div></td>;
                                 case 'pers': return <td key={col} className="px-3 py-3 text-[#3B2507] text-center">{r.nr_persoane}</td>;
                                 case 'data': return <td key={col} className="px-3 py-3 text-[#3B2507] whitespace-nowrap">{new Date(r.data_ora).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })}</td>;
                                 case 'ora': return <td key={col} className="px-3 py-3 text-[#3B2507] font-semibold whitespace-nowrap">{new Date(r.data_ora).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</td>;
@@ -604,9 +604,9 @@ export default function AdminPage() {
                             {cfg.label}
                           </span>
                         </div>
-                        <p className="text-[#7A5C3A] text-xs truncate">{r.email}</p>
+                        <p className="text-[#7A5C3A] text-xs truncate"><a href={`mailto:${r.email}`} className="no-underline">{r.email}</a></p>
                         <div className="flex items-center justify-between gap-2">
-                          <p className="text-[#7A5C3A] text-xs tabular-nums tracking-tight">{r.telefon}</p>
+                          <p className="text-[#7A5C3A] text-xs tabular-nums tracking-tight"><a href={`tel:${r.telefon.replace(/\s/g, '')}`} className="no-underline">{r.telefon}</a></p>
                           <div className="flex gap-3 shrink-0">
                             {r.status !== 'confirmată' && <button onClick={() => updateStatus(r.id, 'confirmată')} className="px-3 py-1 rounded-lg border border-emerald-300 bg-emerald-100 text-emerald-700"><IconCheck /></button>}
                             {r.status !== 'respinsă' && <button onClick={() => updateStatus(r.id, 'respinsă')} className="px-3 py-1 rounded-lg border border-red-300 bg-red-100 text-red-600"><IconX /></button>}
