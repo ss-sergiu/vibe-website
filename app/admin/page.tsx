@@ -174,12 +174,20 @@ export default function AdminPage() {
 
   useEffect(() => { if (autentificat) fetchRezervari(); }, [autentificat, fetchRezervari]);
 
+  function vibrate(pattern: number | number[]) {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(pattern);
+  }
+
   async function updateStatus(id: number, status: string) {
+    if (status === 'confirmată') vibrate(50);
+    else if (status === 'respinsă') vibrate([40, 30, 40]);
+    else vibrate(30);
     await fetch(`/api/rezervari/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
     setRezervari(prev => prev.map(r => r.id === id ? { ...r, status } : r));
   }
 
   async function deleteRezervare(id: number) {
+    vibrate([60, 40, 60]);
     await fetch(`/api/rezervari/${id}`, { method: 'DELETE' });
     setRezervari(prev => prev.filter(r => r.id !== id));
   }
