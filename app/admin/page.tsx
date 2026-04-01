@@ -512,11 +512,19 @@ export default function AdminPage() {
                 ))}
               </div>
               <div className="flex gap-2">
+                <button onClick={() => toggleSort('data_ora')} className={`shrink-0 flex flex-col items-center justify-center px-2 py-1 rounded-lg border text-[10px] font-semibold transition-all leading-none gap-0.5 ${sortRez.field === 'data_ora' ? 'bg-[#3B2507] border-[#3B2507] text-[#F5E6C8]' : 'bg-[#EDD9AF] border-[#D4B896] text-[#7A5C3A] hover:bg-[#D4B896]'}`}>
+                  <span>Rez.</span>
+                  <span>{sortRez.field === 'data_ora' ? (sortRez.dir === 'asc' ? '▲' : '▼') : '⇅'}</span>
+                </button>
                 <input type="text" placeholder="Caută după nume, telefon sau email..."
                   value={searchRez} onChange={e => setSearchRez(e.target.value)}
                   className="flex-1 px-3 py-1.5 rounded-lg bg-white border-2 border-[#D4B896] text-[#3B2507] text-sm focus:outline-none focus:border-[#3B2507] transition-all placeholder-[#B89878]" />
                 <button onClick={fetchRezervari} className="p-2 bg-[#EDD9AF] border border-[#D4B896] text-[#3B2507] hover:bg-[#D4B896] rounded-lg transition-all flex items-center justify-center">
                   <IconRefresh />
+                </button>
+                <button onClick={() => toggleSort('created_at')} className={`shrink-0 flex flex-col items-center justify-center px-2 py-1 rounded-lg border text-[10px] font-semibold transition-all leading-none gap-0.5 ${sortRez.field === 'created_at' ? 'bg-[#3B2507] border-[#3B2507] text-[#F5E6C8]' : 'bg-[#EDD9AF] border-[#D4B896] text-[#7A5C3A] hover:bg-[#D4B896]'}`}>
+                  <span>Înr.</span>
+                  <span>{sortRez.field === 'created_at' ? (sortRez.dir === 'asc' ? '▲' : '▼') : '⇅'}</span>
                 </button>
               </div>
             </div>
@@ -615,8 +623,8 @@ export default function AdminPage() {
                         </div>
                         <p className="text-[#3B2507] text-xs truncate"><a href={`mailto:${r.email}`} className="no-underline">{r.email}</a></p>
                         <div className="flex items-center justify-between gap-2">
-                          <p className="text-[#7A5C3A] text-xs">{new Date(r.data_ora).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })} · <span className="text-[#3B2507] font-semibold">{new Date(r.data_ora).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</span> · {r.nr_persoane} pers.</p>
-                          <p className="text-[#B89878] text-xs tabular-nums shrink-0">{new Date(r.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })} {new Date(r.created_at).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</p>
+                          <p className="text-[#7A5C3A] text-[10px] tabular-nums">{new Date(r.data_ora).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })} · <span className="text-[#3B2507] font-semibold">{new Date(r.data_ora).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</span> · {r.nr_persoane}p</p>
+                          <p className="text-[#B89878] text-[10px] tabular-nums shrink-0">{new Date(r.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })} {new Date(r.created_at).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</p>
                         </div>
                       </div>
                     );
