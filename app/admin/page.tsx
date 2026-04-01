@@ -764,8 +764,8 @@ export default function AdminPage() {
                 className="flex-1 px-3 py-2 rounded-xl bg-[#F5E6C8] border-2 border-[#D4B896] text-[#3B2507] text-sm focus:outline-none focus:border-[#3B2507] transition-all placeholder-[#B89878]"
               />
               <button onClick={addCategorie} disabled={addingCat || !newCatName.trim()}
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#3B2507] hover:bg-[#1E1200] disabled:opacity-50 text-[#F5E6C8] text-sm font-semibold rounded-xl transition-all">
-                <IconPlus /> {addingCat ? 'Se adaugă...' : 'Categorie nouă'}
+                className="shrink-0 px-4 py-2 bg-[#3B2507] hover:bg-[#1E1200] disabled:opacity-50 text-[#F5E6C8] text-sm font-semibold rounded-xl transition-all whitespace-nowrap">
+                {addingCat ? 'Se adaugă...' : 'Categorie nouă'}
               </button>
             </div>
             <div className="bg-[#F5E6C8] border border-[#D4B896] rounded-2xl overflow-hidden shadow-sm">
@@ -775,10 +775,10 @@ export default function AdminPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-[#EDD9AF] border-b border-[#D4B896]">
-                      <th className="px-4 py-3 text-left text-[#7A5C3A] font-semibold text-xs uppercase tracking-wider w-8">Ord.</th>
-                      <th className="px-4 py-3 text-left text-[#7A5C3A] font-semibold text-xs uppercase tracking-wider">Categorie</th>
-                      <th className="px-4 py-3 text-center text-[#7A5C3A] font-semibold text-xs uppercase tracking-wider">Produse</th>
-                      <th className="px-4 py-3"></th>
+                      <th className="px-2 py-3 text-left text-[#7A5C3A] font-semibold text-xs uppercase tracking-wider w-8">Ord.</th>
+                      <th className="px-2 py-3 text-left text-[#7A5C3A] font-semibold text-xs uppercase tracking-wider">Categorie</th>
+                      <th className="px-2 py-3 text-center text-[#7A5C3A] font-semibold text-xs uppercase tracking-wider">Prod.</th>
+                      <th className="px-2 py-3"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -786,7 +786,7 @@ export default function AdminPage() {
                       const count = produse.filter(p => p.category === cat.name).length;
                       return (
                         <tr key={cat.id} className={`border-b border-[#D4B896]/40 ${i % 2 === 0 ? 'bg-[#F5E6C8]' : 'bg-[#FAF0DC]'}`}>
-                          <td className="px-3 py-3">
+                          <td className="px-1 py-3">
                             <div className="flex flex-col gap-0.5">
                               <button onClick={() => moveCategory(cat.id, 'up')} disabled={i === 0}
                                 className="p-0.5 rounded hover:bg-[#D4B896] text-[#7A5C3A] disabled:opacity-20 transition-colors leading-none text-[10px]">▲</button>
@@ -794,7 +794,7 @@ export default function AdminPage() {
                                 className="p-0.5 rounded hover:bg-[#D4B896] text-[#7A5C3A] disabled:opacity-20 transition-colors leading-none text-[10px]">▼</button>
                             </div>
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-2 py-3">
                             {renameCat === cat.id ? (
                               <input autoFocus value={renameCatVal} onChange={e => setRenameCatVal(e.target.value)}
                                 onKeyDown={e => { if (e.key === 'Enter') renameCategory(cat.id, cat.name, renameCatVal); if (e.key === 'Escape') setRenameCat(null); }}
@@ -803,10 +803,10 @@ export default function AdminPage() {
                               <span className="text-[#3B2507] font-semibold">{cat.name}</span>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-center">
+                          <td className="px-2 py-3 text-center">
                             <span className="text-[#3B2507] text-sm font-semibold">{count}</span>
                           </td>
-                          <td className="px-4 py-3 text-right">
+                          <td className="px-2 py-3 text-right">
                             {renameCat === cat.id ? (
                               <div className="flex gap-1 justify-end">
                                 <button onClick={() => renameCategory(cat.id, cat.name, renameCatVal)} disabled={savingCat}
