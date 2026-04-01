@@ -48,6 +48,21 @@ const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; d
   'respinsă':     { label: 'Resp.', bg: 'bg-red-100',     text: 'text-red-800',     dot: 'bg-red-400',     border: 'border border-red-300' },
 };
 
+// ─── Column order ────────────────────────────────────────────────────────────
+
+type ColId = 'nume' | 'contact' | 'pers' | 'data' | 'ora' | 'status' | 'inregistrat' | 'actiuni';
+const DEFAULT_COL_ORDER: ColId[] = ['nume', 'contact', 'pers', 'data', 'ora', 'status', 'inregistrat', 'actiuni'];
+const COL_HEADERS: Record<ColId, { label: string; sortField: 'nume' | 'nr_persoane' | 'data_ora' | 'status' | 'created_at' | null }> = {
+  nume:        { label: 'Nume',        sortField: 'nume'        },
+  contact:     { label: 'Contact',     sortField: null          },
+  pers:        { label: 'Pers.',       sortField: 'nr_persoane' },
+  data:        { label: 'Data',        sortField: 'data_ora'    },
+  ora:         { label: 'Ora',         sortField: 'data_ora'    },
+  status:      { label: 'Status',      sortField: 'status'      },
+  inregistrat: { label: 'Înregistrat', sortField: 'created_at'  },
+  actiuni:     { label: '',            sortField: null          },
+};
+
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
 function IconEdit() {
@@ -63,7 +78,7 @@ function IconX() {
   return <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>;
 }
 function IconRefresh() {
-  return <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>;
+  return <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>;
 }
 function IconPlus() {
   return <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>;
@@ -96,6 +111,15 @@ export default function AdminPage() {
   const [searchRez, setSearchRez] = useState('');
   const [filterRez, setFilterRez] = useState<'all' | 'pending' | 'confirmed' | 'rejected'>('all');
   const [sortRez, setSortRez] = useState<{ field: 'nume' | 'nr_persoane' | 'data_ora' | 'status' | 'created_at'; dir: 'asc' | 'desc' }>({ field: 'data_ora', dir: 'asc' });
+  const [colOrder, setColOrder] = useState<ColId[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('adminColOrder');
+      if (saved) try { return JSON.parse(saved) as ColId[]; } catch {}
+    }
+    return DEFAULT_COL_ORDER;
+  });
+  const [dragColId, setDragColId] = useState<ColId | null>(null);
+  const [dragOverColId, setDragOverColId] = useState<ColId | null>(null);
 
   // Produse
   const [produse, setProduse] = useState<Produs[]>([]);
@@ -507,28 +531,42 @@ export default function AdminPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-[#EDD9AF] border-b border-[#D4B896]">
-                        {([
-                          ['Nume',        'nume'       ],
-                          ['Contact',     null         ],
-                          ['Pers.',       'nr_persoane'],
-                          ['Data',        'data_ora'   ],
-                          ['Ora',         'data_ora'   ],
-                          ['Status',      'status'     ],
-                          ['Înregistrat', 'created_at' ],
-                          ['',            null         ],
-                        ] as [string, string | null][]).map(([h, field]) => (
-                          <th key={h + (field ?? '')} className="px-3 py-3 text-left text-[#7A5C3A] font-semibold text-xs uppercase tracking-wider whitespace-nowrap">
-                            {field ? (
-                              <button onClick={() => toggleSort(field as typeof sortRez.field)} className="flex items-center gap-1 hover:text-[#3B2507] transition-colors">
-                                {h}
-                                <span className="flex flex-col leading-none">
-                                  <span className={`text-[8px] ${sortRez.field === field && sortRez.dir === 'asc' ? 'text-[#3B2507]' : 'text-[#D4B896]'}`}>▲</span>
-                                  <span className={`text-[8px] ${sortRez.field === field && sortRez.dir === 'desc' ? 'text-[#3B2507]' : 'text-[#D4B896]'}`}>▼</span>
-                                </span>
-                              </button>
-                            ) : h}
-                          </th>
-                        ))}
+                        {colOrder.map(col => {
+                          const { label, sortField } = COL_HEADERS[col];
+                          const isDragging = dragColId === col;
+                          const isDragOver = dragOverColId === col && dragColId !== col;
+                          return (
+                            <th
+                              key={col}
+                              draggable
+                              onDragStart={() => setDragColId(col)}
+                              onDragEnter={() => setDragOverColId(col)}
+                              onDragOver={e => e.preventDefault()}
+                              onDrop={() => {
+                                if (!dragColId || dragColId === col) return;
+                                const next = [...colOrder];
+                                const from = next.indexOf(dragColId);
+                                const to = next.indexOf(col);
+                                next.splice(from, 1);
+                                next.splice(to, 0, dragColId);
+                                setColOrder(next);
+                                localStorage.setItem('adminColOrder', JSON.stringify(next));
+                              }}
+                              onDragEnd={() => { setDragColId(null); setDragOverColId(null); }}
+                              className={`px-3 py-3 text-left text-[#7A5C3A] font-semibold text-xs uppercase tracking-wider whitespace-nowrap select-none cursor-grab active:cursor-grabbing transition-colors ${isDragging ? 'opacity-40' : ''} ${isDragOver ? 'bg-[#D4B896]/60' : ''}`}
+                            >
+                              {sortField ? (
+                                <button onClick={() => toggleSort(sortField as typeof sortRez.field)} className="flex items-center gap-1 hover:text-[#3B2507] transition-colors">
+                                  {label}
+                                  <span className="flex flex-col leading-none">
+                                    <span className={`text-[8px] ${sortRez.field === sortField && sortRez.dir === 'asc' ? 'text-[#3B2507]' : 'text-[#D4B896]'}`}>▲</span>
+                                    <span className={`text-[8px] ${sortRez.field === sortField && sortRez.dir === 'desc' ? 'text-[#3B2507]' : 'text-[#D4B896]'}`}>▼</span>
+                                  </span>
+                                </button>
+                              ) : label}
+                            </th>
+                          );
+                        })}
                       </tr>
                     </thead>
                     <tbody>
@@ -536,30 +574,19 @@ export default function AdminPage() {
                         const cfg = STATUS_CONFIG[r.status];
                         return (
                           <tr key={r.id} className={`border-b border-[#D4B896]/40 hover:bg-[#EDD9AF]/50 transition-colors ${i % 2 === 0 ? 'bg-[#F5E6C8]' : 'bg-[#FAF0DC]'}`}>
-                            <td className="px-3 py-3 text-[#3B2507] font-semibold whitespace-nowrap">{r.nume}</td>
-                            <td className="px-3 py-3">
-                              <div className="text-[#3B2507] text-xs">{r.email}</div>
-                              <div className="text-[#7A5C3A] text-xs">{r.telefon}</div>
-                            </td>
-                            <td className="px-3 py-3 text-[#3B2507] text-center">{r.nr_persoane}</td>
-                            <td className="px-3 py-3 text-[#3B2507] whitespace-nowrap">{new Date(r.data_ora).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })}</td>
-                            <td className="px-3 py-3 text-[#3B2507] font-semibold whitespace-nowrap">{new Date(r.data_ora).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</td>
-                            <td className="px-3 py-3">
-                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${cfg.bg} ${cfg.text} ${cfg.border}`}>
-                                {cfg.label}
-                              </span>
-                            </td>
-                            <td className="px-3 py-3 text-[#7A5C3A] text-xs whitespace-nowrap">
-                              {new Date(r.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
-                            </td>
-                            <td className="px-3 py-3">
-                              <div className="flex items-center gap-1.5">
-                                {r.status !== 'confirmată' && <button onClick={() => updateStatus(r.id, 'confirmată')} title="Confirmă" className="p-1.5 rounded-lg border border-emerald-300 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"><IconCheck /></button>}
-                                {r.status !== 'respinsă' && <button onClick={() => updateStatus(r.id, 'respinsă')} title="Respinge" className="p-1.5 rounded-lg border border-red-300 bg-red-100 text-red-600 hover:bg-red-200 transition-colors"><IconX /></button>}
-                                {r.status !== 'în așteptare' && <button onClick={() => updateStatus(r.id, 'în așteptare')} title="Resetează" className="p-1.5 rounded-lg border border-amber-300 bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"><IconRefresh /></button>}
-                                <button onClick={() => deleteRezervare(r.id)} title="Șterge" className="p-1.5 rounded-lg border border-[#D4B896] bg-[#EDD9AF] text-[#7A5C3A] hover:bg-red-100 hover:text-red-600 hover:border-red-300 transition-colors"><IconTrash /></button>
-                              </div>
-                            </td>
+                            {colOrder.map(col => {
+                              switch (col) {
+                                case 'nume': return <td key={col} className="px-3 py-3 text-[#3B2507] font-semibold whitespace-nowrap">{r.nume}</td>;
+                                case 'contact': return <td key={col} className="px-3 py-3"><div className="text-[#3B2507] text-xs">{r.email}</div><div className="text-[#7A5C3A] text-xs">{r.telefon}</div></td>;
+                                case 'pers': return <td key={col} className="px-3 py-3 text-[#3B2507] text-center">{r.nr_persoane}</td>;
+                                case 'data': return <td key={col} className="px-3 py-3 text-[#3B2507] whitespace-nowrap">{new Date(r.data_ora).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })}</td>;
+                                case 'ora': return <td key={col} className="px-3 py-3 text-[#3B2507] font-semibold whitespace-nowrap">{new Date(r.data_ora).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</td>;
+                                case 'status': return <td key={col} className="px-3 py-3"><span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${cfg.bg} ${cfg.text} ${cfg.border}`}>{cfg.label}</span></td>;
+                                case 'inregistrat': return <td key={col} className="px-3 py-3 text-[#7A5C3A] text-xs whitespace-nowrap">{new Date(r.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}</td>;
+                                case 'actiuni': return <td key={col} className="px-3 py-3"><div className="flex items-center gap-1.5">{r.status !== 'confirmată' && <button onClick={() => updateStatus(r.id, 'confirmată')} title="Confirmă" className="p-1.5 rounded-lg border border-emerald-300 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"><IconCheck /></button>}{r.status !== 'respinsă' && <button onClick={() => updateStatus(r.id, 'respinsă')} title="Respinge" className="p-1.5 rounded-lg border border-red-300 bg-red-100 text-red-600 hover:bg-red-200 transition-colors"><IconX /></button>}{r.status !== 'în așteptare' && <button onClick={() => updateStatus(r.id, 'în așteptare')} title="Resetează" className="p-1.5 rounded-lg border border-amber-300 bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"><IconRefresh /></button>}<button onClick={() => deleteRezervare(r.id)} title="Șterge" className="p-1.5 rounded-lg border border-[#D4B896] bg-[#EDD9AF] text-[#7A5C3A] hover:bg-red-100 hover:text-red-600 hover:border-red-300 transition-colors"><IconTrash /></button></div></td>;
+                                default: return null;
+                              }
+                            })}
                           </tr>
                         );
                       })}
@@ -579,7 +606,7 @@ export default function AdminPage() {
                         </div>
                         <p className="text-[#7A5C3A] text-xs truncate">{r.email}</p>
                         <div className="flex items-center justify-between gap-2">
-                          <p className="text-[#7A5C3A] text-xs">{r.telefon}</p>
+                          <p className="text-[#7A5C3A] text-xs tabular-nums tracking-tight">{r.telefon}</p>
                           <div className="flex gap-3 shrink-0">
                             {r.status !== 'confirmată' && <button onClick={() => updateStatus(r.id, 'confirmată')} className="px-3 py-1 rounded-lg border border-emerald-300 bg-emerald-100 text-emerald-700"><IconCheck /></button>}
                             {r.status !== 'respinsă' && <button onClick={() => updateStatus(r.id, 'respinsă')} className="px-3 py-1 rounded-lg border border-red-300 bg-red-100 text-red-600"><IconX /></button>}
