@@ -614,7 +614,10 @@ export default function AdminPage() {
                           </div>
                         </div>
                         <p className="text-[#3B2507] text-xs truncate"><a href={`mailto:${r.email}`} className="no-underline">{r.email}</a></p>
-                        <p className="text-[#7A5C3A] text-xs">{new Date(r.data_ora).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })} · <span className="text-[#3B2507] font-semibold">{new Date(r.data_ora).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</span> · {r.nr_persoane} pers.</p>
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-[#7A5C3A] text-xs">{new Date(r.data_ora).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })} · <span className="text-[#3B2507] font-semibold">{new Date(r.data_ora).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</span> · {r.nr_persoane} pers.</p>
+                          <p className="text-[#B89878] text-xs tabular-nums shrink-0">{new Date(r.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })} {new Date(r.created_at).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</p>
+                        </div>
                       </div>
                     );
                   })}
