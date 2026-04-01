@@ -604,7 +604,6 @@ export default function AdminPage() {
                             {cfg.label}
                           </span>
                         </div>
-                        <p className="text-[#7A5C3A] text-xs truncate"><a href={`mailto:${r.email}`} className="no-underline">{r.email}</a></p>
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-[#7A5C3A] text-xs tabular-nums tracking-tight"><a href={`tel:${r.telefon.replace(/\s/g, '')}`} className="no-underline">{r.telefon}</a></p>
                           <div className="flex gap-3 shrink-0">
@@ -614,6 +613,7 @@ export default function AdminPage() {
                             <button onClick={() => deleteRezervare(r.id)} className="px-3 py-1 rounded-lg border border-[#D4B896] bg-[#EDD9AF] text-[#7A5C3A]"><IconTrash /></button>
                           </div>
                         </div>
+                        <p className="text-[#3B2507] text-xs truncate"><a href={`mailto:${r.email}`} className="no-underline">{r.email}</a></p>
                         <p className="text-[#7A5C3A] text-xs">{new Date(r.data_ora).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })} · <span className="text-[#3B2507] font-semibold">{new Date(r.data_ora).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</span> · {r.nr_persoane} pers.</p>
                       </div>
                     );
