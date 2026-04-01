@@ -12,7 +12,7 @@ export default function Features() {
 
         {/* TITLU */}
         <h2 className="font-dm-serif text-4xl md:text-5xl text-[#F5E6C8] text-center mb-12">
-          De ce Vibe Coffee?
+          De ce Vibe Caffè?
         </h2>
 
         {/* BENTO GRID */}

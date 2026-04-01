@@ -35,7 +35,7 @@ export default function Navigation() {
 
         {/* LOGO */}
         <a href="/" onClick={() => setMenuOpen(false)} className="font-dm-serif text-2xl text-[#F5E6C8] tracking-wide">
-          Vibe Coffee
+          Vibe Caffè
         </a>
 
         {/* LINKS - desktop */}

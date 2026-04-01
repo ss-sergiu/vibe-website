@@ -466,19 +466,19 @@ export default function AdminPage() {
           <>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
               {[
-                { label: 'Total',      val: countsRez.all,       accent: '#3B2507', bg: '#F5E6C8' },
-                { label: 'Așteptare',  val: countsRez.pending,   accent: '#92400E', bg: '#FEF3C7' },
-                { label: 'Confirmate', val: countsRez.confirmed, accent: '#065F46', bg: '#D1FAE5' },
-                { label: 'Respinse',   val: countsRez.rejected,  accent: '#991B1B', bg: '#FEE2E2' },
-              ].map(({ label, val, accent, bg }) => (
-                <div key={label} className="rounded-xl px-3 py-2 border border-[#D4B896]/60 flex items-center justify-between gap-3" style={{ backgroundColor: bg }}>
+                { label: 'Total',      val: countsRez.all,       accent: '#3B2507', bg: '#F5E6C8', border: '#D4B896' },
+                { label: 'Așteptare',  val: countsRez.pending,   accent: '#92400E', bg: '#FEF3C7', border: '#D97706' },
+                { label: 'Confirmate', val: countsRez.confirmed, accent: '#065F46', bg: '#D1FAE5', border: '#059669' },
+                { label: 'Respinse',   val: countsRez.rejected,  accent: '#991B1B', bg: '#FEE2E2', border: '#DC2626' },
+              ].map(({ label, val, accent, bg, border }) => (
+                <div key={label} className="rounded-xl px-3 py-1 border flex items-center justify-between gap-3" style={{ backgroundColor: bg, borderColor: border }}>
                   <p className="text-xs font-semibold" style={{ color: accent, opacity: 0.75 }}>{label}</p>
                   <p className="text-xl font-bold" style={{ color: accent }}>{val}</p>
                 </div>
               ))}
             </div>
 
-            <div className="bg-[#F5E6C8] border border-[#D4B896] rounded-2xl p-3 mb-5 flex flex-col md:flex-row gap-3">
+            <div className="bg-[#F5E6C8] border border-[#D4B896] rounded-2xl p-3 mb-5 flex flex-col gap-2">
               <div className="flex flex-wrap gap-1.5">
                 {([['all', 'Toate'], ['pending', 'Așteptare'], ['confirmed', 'Confirmate'], ['rejected', 'Respinse']] as const).map(([key, label]) => (
                   <button key={key} onClick={() => setFilterRez(key)}
@@ -487,12 +487,14 @@ export default function AdminPage() {
                   </button>
                 ))}
               </div>
-              <input type="text" placeholder="Caută după nume, telefon sau email..."
-                value={searchRez} onChange={e => setSearchRez(e.target.value)}
-                className="flex-1 px-3 py-1.5 rounded-lg bg-white border-2 border-[#D4B896] text-[#3B2507] text-sm focus:outline-none focus:border-[#3B2507] transition-all placeholder-[#B89878]" />
-              <button onClick={fetchRezervari} className="p-2 bg-[#EDD9AF] border border-[#D4B896] text-[#3B2507] hover:bg-[#D4B896] rounded-lg transition-all flex items-center justify-center self-start md:self-auto">
-                <IconRefresh />
-              </button>
+              <div className="flex gap-2">
+                <input type="text" placeholder="Caută după nume, telefon sau email..."
+                  value={searchRez} onChange={e => setSearchRez(e.target.value)}
+                  className="flex-1 px-3 py-1.5 rounded-lg bg-white border-2 border-[#D4B896] text-[#3B2507] text-sm focus:outline-none focus:border-[#3B2507] transition-all placeholder-[#B89878]" />
+                <button onClick={fetchRezervari} className="p-2 bg-[#EDD9AF] border border-[#D4B896] text-[#3B2507] hover:bg-[#D4B896] rounded-lg transition-all flex items-center justify-center">
+                  <IconRefresh />
+                </button>
+              </div>
             </div>
 
             {loadingRez ? (
@@ -543,19 +545,19 @@ export default function AdminPage() {
                             <td className="px-3 py-3 text-[#3B2507] whitespace-nowrap">{new Date(r.data_ora).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })}</td>
                             <td className="px-3 py-3 text-[#3B2507] font-semibold whitespace-nowrap">{new Date(r.data_ora).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</td>
                             <td className="px-3 py-3">
-                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${cfg.bg} ${cfg.text} ${cfg.border}`}>
-                                <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />{cfg.label}
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${cfg.bg} ${cfg.text} ${cfg.border}`}>
+                                {cfg.label}
                               </span>
                             </td>
                             <td className="px-3 py-3 text-[#7A5C3A] text-xs whitespace-nowrap">
                               {new Date(r.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short', year: 'numeric' })}
                             </td>
                             <td className="px-3 py-3">
-                              <div className="flex items-center gap-1">
-                                {r.status !== 'confirmată' && <button onClick={() => updateStatus(r.id, 'confirmată')} title="Confirmă" className="p-1.5 rounded-lg hover:bg-emerald-100 text-emerald-700 transition-colors"><IconCheck /></button>}
-                                {r.status !== 'respinsă' && <button onClick={() => updateStatus(r.id, 'respinsă')} title="Respinge" className="p-1.5 rounded-lg hover:bg-red-100 text-red-600 transition-colors"><IconX /></button>}
-                                {r.status !== 'în așteptare' && <button onClick={() => updateStatus(r.id, 'în așteptare')} title="Resetează" className="p-1.5 rounded-lg hover:bg-amber-100 text-amber-700 transition-colors"><IconRefresh /></button>}
-                                <button onClick={() => deleteRezervare(r.id)} title="Șterge" className="p-1.5 rounded-lg hover:bg-red-100 text-[#D4B896] hover:text-red-600 transition-colors"><IconTrash /></button>
+                              <div className="flex items-center gap-1.5">
+                                {r.status !== 'confirmată' && <button onClick={() => updateStatus(r.id, 'confirmată')} title="Confirmă" className="p-1.5 rounded-lg border border-emerald-300 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors"><IconCheck /></button>}
+                                {r.status !== 'respinsă' && <button onClick={() => updateStatus(r.id, 'respinsă')} title="Respinge" className="p-1.5 rounded-lg border border-red-300 bg-red-100 text-red-600 hover:bg-red-200 transition-colors"><IconX /></button>}
+                                {r.status !== 'în așteptare' && <button onClick={() => updateStatus(r.id, 'în așteptare')} title="Resetează" className="p-1.5 rounded-lg border border-amber-300 bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"><IconRefresh /></button>}
+                                <button onClick={() => deleteRezervare(r.id)} title="Șterge" className="p-1.5 rounded-lg border border-[#D4B896] bg-[#EDD9AF] text-[#7A5C3A] hover:bg-red-100 hover:text-red-600 hover:border-red-300 transition-colors"><IconTrash /></button>
                               </div>
                             </td>
                           </tr>
@@ -568,26 +570,24 @@ export default function AdminPage() {
                   {filteredRez.map((r, i) => {
                     const cfg = STATUS_CONFIG[r.status];
                     return (
-                      <div key={r.id} className={`px-3 py-2.5 ${i % 2 === 0 ? 'bg-[#F5E6C8]' : 'bg-[#FAF0DC]'}`}>
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <p className="text-[#3B2507] font-semibold text-sm leading-tight">{r.nume}</p>
-                            <p className="text-[#7A5C3A] text-xs leading-tight truncate">{r.email}</p>
-                            <p className="text-[#7A5C3A] text-xs leading-tight">{r.telefon}</p>
-                            <p className="text-[#7A5C3A] text-xs mt-1">{new Date(r.data_ora).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })} · <span className="text-[#3B2507] font-semibold">{new Date(r.data_ora).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</span> · {r.nr_persoane} pers.</p>
-                          </div>
-                          <div className="flex flex-col items-end gap-1 shrink-0">
-                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${cfg.bg} ${cfg.text} ${cfg.border}`}>
-                              <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />{cfg.label}
-                            </span>
-                            <div className="flex gap-1">
-                              {r.status !== 'confirmată' && <button onClick={() => updateStatus(r.id, 'confirmată')} className="p-1 rounded-lg bg-emerald-100 text-emerald-700"><IconCheck /></button>}
-                              {r.status !== 'respinsă' && <button onClick={() => updateStatus(r.id, 'respinsă')} className="p-1 rounded-lg bg-red-100 text-red-600"><IconX /></button>}
-                              {r.status !== 'în așteptare' && <button onClick={() => updateStatus(r.id, 'în așteptare')} className="p-1 rounded-lg bg-amber-100 text-amber-700"><IconRefresh /></button>}
-                              <button onClick={() => deleteRezervare(r.id)} className="p-1 rounded-lg bg-[#EDD9AF] text-[#7A5C3A]"><IconTrash /></button>
-                            </div>
+                      <div key={r.id} className={`px-3 py-1.5 ${i % 2 === 0 ? 'bg-[#F5E6C8]' : 'bg-[#FAF0DC]'}`}>
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-[#3B2507] font-semibold text-sm leading-none">{r.nume}</p>
+                          <span className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${cfg.bg} ${cfg.text} ${cfg.border}`}>
+                            {cfg.label}
+                          </span>
+                        </div>
+                        <p className="text-[#7A5C3A] text-xs truncate">{r.email}</p>
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-[#7A5C3A] text-xs">{r.telefon}</p>
+                          <div className="flex gap-3 shrink-0">
+                            {r.status !== 'confirmată' && <button onClick={() => updateStatus(r.id, 'confirmată')} className="px-3 py-1 rounded-lg border border-emerald-300 bg-emerald-100 text-emerald-700"><IconCheck /></button>}
+                            {r.status !== 'respinsă' && <button onClick={() => updateStatus(r.id, 'respinsă')} className="px-3 py-1 rounded-lg border border-red-300 bg-red-100 text-red-600"><IconX /></button>}
+                            {r.status !== 'în așteptare' && <button onClick={() => updateStatus(r.id, 'în așteptare')} className="px-3 py-1 rounded-lg border border-amber-300 bg-amber-100 text-amber-700"><IconRefresh /></button>}
+                            <button onClick={() => deleteRezervare(r.id)} className="px-3 py-1 rounded-lg border border-[#D4B896] bg-[#EDD9AF] text-[#7A5C3A]"><IconTrash /></button>
                           </div>
                         </div>
+                        <p className="text-[#7A5C3A] text-xs">{new Date(r.data_ora).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' })} · <span className="text-[#3B2507] font-semibold">{new Date(r.data_ora).toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}</span> · {r.nr_persoane} pers.</p>
                       </div>
                     );
                   })}
@@ -680,9 +680,9 @@ export default function AdminPage() {
                                 <button onClick={() => setConfirmDeleteProd(null)} className="px-2 py-1 bg-[#EDD9AF] border border-[#D4B896] text-[#3B2507] text-xs rounded-lg">Nu</button>
                               </div>
                             ) : (
-                              <div className="flex gap-1 justify-end">
-                                <button onClick={() => openEdit(p)} className="p-1.5 rounded-lg hover:bg-[#EDD9AF] text-[#7A5C3A] hover:text-[#3B2507] transition-colors"><IconEdit /></button>
-                                <button onClick={() => setConfirmDeleteProd(p.id)} className="p-1.5 rounded-lg hover:bg-red-100 text-[#D4B896] hover:text-red-600 transition-colors"><IconTrash /></button>
+                              <div className="flex gap-5 justify-end">
+                                <button onClick={() => openEdit(p)} className="px-3.5 py-2 rounded-lg bg-[#EDD9AF] border border-[#D4B896] text-[#7A5C3A] hover:text-[#3B2507] hover:bg-[#D4B896] transition-colors"><IconEdit /></button>
+                                <button onClick={() => setConfirmDeleteProd(p.id)} className="px-3.5 py-2 rounded-lg bg-[#EDD9AF] border border-[#D4B896] text-[#D4B896] hover:bg-red-100 hover:text-red-600 hover:border-red-300 transition-colors"><IconTrash /></button>
                               </div>
                             )}
                           </td>
@@ -706,9 +706,9 @@ export default function AdminPage() {
                           <p className="text-[#3B2507] font-bold whitespace-nowrap">{p.price} lei</p>
                         </div>
                         <p className="text-[#7A5C3A] text-xs mb-2">{p.category}{p.vegan ? ' · Vegan' : ''}</p>
-                        <div className="flex gap-1">
-                          <button onClick={() => openEdit(p)} className="p-1.5 rounded-lg bg-[#EDD9AF] border border-[#D4B896] text-[#3B2507]"><IconEdit /></button>
-                          <button onClick={() => setConfirmDeleteProd(p.id)} className="p-1.5 rounded-lg bg-[#EDD9AF] border border-[#D4B896] text-[#7A5C3A]"><IconTrash /></button>
+                        <div className="flex gap-4">
+                          <button onClick={() => openEdit(p)} className="px-2.5 py-1.5 rounded-lg bg-[#EDD9AF] border border-[#D4B896] text-[#3B2507]"><IconEdit /></button>
+                          <button onClick={() => setConfirmDeleteProd(p.id)} className="px-2.5 py-1.5 rounded-lg bg-[#EDD9AF] border border-[#D4B896] text-[#7A5C3A]"><IconTrash /></button>
                         </div>
                         {confirmDeleteProd === p.id && (
                           <div className="flex gap-1 mt-2">
@@ -777,7 +777,7 @@ export default function AdminPage() {
                             )}
                           </td>
                           <td className="px-4 py-3 text-center">
-                            <span className="px-2 py-0.5 bg-[#EDD9AF] border border-[#D4B896] text-[#3B2507] text-xs rounded-full font-semibold">{count}</span>
+                            <span className="text-[#3B2507] text-sm font-semibold">{count}</span>
                           </td>
                           <td className="px-4 py-3 text-right">
                             {renameCat === cat.id ? (
@@ -789,14 +789,14 @@ export default function AdminPage() {
                                 <button onClick={() => setRenameCat(null)} className="px-2 py-1 bg-[#EDD9AF] border border-[#D4B896] text-[#3B2507] text-xs rounded-lg">Anulează</button>
                               </div>
                             ) : (
-                              <div className="flex gap-1 justify-end">
+                              <div className="flex gap-5 justify-end">
                                 <button onClick={() => { setRenameCat(cat.id); setRenameCatVal(cat.name); }}
-                                  className="p-1.5 rounded-lg hover:bg-[#EDD9AF] text-[#7A5C3A] hover:text-[#3B2507] transition-colors" title="Redenumește">
+                                  className="px-3.5 py-2 rounded-lg bg-[#EDD9AF] border border-[#D4B896] text-[#7A5C3A] hover:text-[#3B2507] hover:bg-[#D4B896] transition-colors" title="Redenumește">
                                   <IconEdit />
                                 </button>
                                 <button onClick={() => deleteCategorie(cat.id)} disabled={count > 0}
                                   title={count > 0 ? 'Mută produsele mai întâi' : 'Șterge'}
-                                  className="p-1.5 rounded-lg hover:bg-red-100 text-[#D4B896] hover:text-red-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+                                  className="px-3.5 py-2 rounded-lg bg-[#EDD9AF] border border-[#D4B896] text-[#D4B896] hover:bg-red-100 hover:text-red-600 hover:border-red-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                                   <IconTrash />
                                 </button>
                               </div>

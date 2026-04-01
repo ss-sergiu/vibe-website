@@ -100,7 +100,7 @@ export default function Contact() {
               height="100%"
               style={{ border: 0 }}
               loading="lazy"
-              title="Locație Vibe Coffee"
+              title="Locație Vibe Caffè"
             />
           </div>
 

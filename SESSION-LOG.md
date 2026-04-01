@@ -1,3 +1,53 @@
+## 30.03.2026 — Validare email avansată, sugestii typo și multi-variantă
+
+### Ce s-a făcut
+
+**`lib/email-typos.ts` — fișier nou de typo-uri**
+- `DOMENII_CORECTE` — lista domeniilor valide pentru fuzzy matching (Levenshtein)
+- `TYPOS_CUNOSCUTE` — mapare explicită ~50 typo-uri (Gmail, Yahoo, Hotmail, Outlook, iCloud, Mail.ru, Yandex, Inbox.ru etc.)
+- `DOMENII_AMBIGUE` — domenii care oferă mai multe variante: `mail.com` → `gmail.com` / `mail.ru`; `gmail.ru` → `gmail.com` / `mail.ru`
+- `EmailSugestie` — tip discriminat: `{ tip: 'unic', email }` sau `{ tip: 'multiplu', variante[] }`
+- `suggestEmailCorrection()` — verifică întâi DOMENII_AMBIGUE, apoi TYPOS_CUNOSCUTE, apoi fuzzy ≤2
+
+**`app/rezervari/page.tsx` — UI sugestii email**
+- `emailSugestie` state actualizat la `EmailSugestie | null`
+- `tip: 'unic'` → banner amber cu un buton „Corectează"
+- `tip: 'multiplu'` → banner amber cu titlu „Alege adresa corectă:" + câte un buton per variantă
+
+**Admin produse**
+- Sortare + căutare după nume/categorie
+- Culori alternante pe rânduri (desktop + mobile)
+
+**Admin categorii**
+- Buton „Categorie Nouă" + reordonare ▲▼
+- Tab activ persistent via `localStorage`
+
+**Rezervări**
+- Validare telefon moldovenesc: prima cifră trebuie să fie 6 sau 7
+- Orele trecute dezactivate pe data de azi (strikethrough + gri deschis)
+- Fix timezone: datetime trimis cu offset local → PostgreSQL stochează corect
+
+**Meniu sticky**
+- Bara de scroll ascunsă (`.scrollbar-none` + `overflow-hidden` pe container)
+
+### Ce rămâne
+- [ ] Admin: îmbunătățire UX login/logout (opțiune vizibilă)
+
+### Commits
+- `ad9aa5a` feat: add email typo detection with suggestions and calendar page UX improvements
+- `9593f35` fix: fix timezone bug in reservations, disable past hours, add phone validation and admin UX improvements
+- `7523759` fix: resolve TypeScript type errors in Menu.tsx category mapping
+- `9335835` feat: add product/category management, image upload, Unsplash resolver, and admin UX improvements
+- `6d91c72` feat: add multi-variant email suggestions for ambiguous domains
+- `49d430a` fix: fix fuzzy email suggestion return type to EmailSugestie
+
+### Decizii importante
+- `gmail.ru` și `mail.com` tratate ca domenii ambigue (nu greșeli clare) — utilizatorul alege explicit varianta dorită
+- Fuzzy matching Levenshtein cu prag ≤2 evită false positives pe domenii complet diferite
+- Fișierul `email-typos.ts` proiectat pentru extensibilitate ușoară (comentarii cu instrucțiuni inline)
+
+---
+
 ## 30.03.2026 — Font DM Serif Display + îmbunătățiri emailuri și admin
 
 ### Ce s-a făcut
