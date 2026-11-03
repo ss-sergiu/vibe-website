@@ -31,10 +31,11 @@ interface Produs {
   sort_order: number;
 }
 
-type ProdusForm = Omit<Produs, 'id' | 'sort_order'>;
+// Prețul e text în formular, ca să poată fi golit și editat liber
+type ProdusForm = Omit<Produs, 'id' | 'sort_order' | 'price'> & { price: string };
 
 const FORM_INITIAL: ProdusForm = {
-  name: '', category: '', price: 0,
+  name: '', category: '', price: '',
   description: '', ingredients: '', image: '', vegan: false,
 };
 
@@ -161,7 +162,9 @@ export default function AdminPage() {
       body: JSON.stringify({ password: parola }),
     });
     if (res.ok) { setAutentificat(true); }
-    else setEroareAuth('Parolă incorectă.');
+    else if (res.status === 401) setEroareAuth('Parolă incorectă.');
+    else if (res.status === 429) setEroareAuth('Prea multe încercări. Încearcă din nou în 15 minute.');
+    else setEroareAuth('Autentificarea nu este disponibilă momentan.');
     setLoadingAuth(false);
   }
 
@@ -277,7 +280,7 @@ export default function AdminPage() {
 
   function openAdd() { setForm(FORM_INITIAL); setModal('add'); }
   function openEdit(p: Produs) {
-    setForm({ name: p.name, category: p.category, price: p.price, description: p.description, ingredients: p.ingredients, image: p.image, vegan: p.vegan });
+    setForm({ name: p.name, category: p.category, price: String(p.price), description: p.description, ingredients: p.ingredients, image: p.image, vegan: p.vegan });
     setModal(p);
   }
 
@@ -301,17 +304,33 @@ export default function AdminPage() {
 
   const isUnsplashPageUrl = form.image.includes('unsplash.com/photos/');
 
+  const pretValid = !isNaN(parseFloat(form.price));
+
+  function handlePriceChange(value: string) {
+    const text = value.replace(',', '.');
+    if (!/^d*.?d{0,2}$/.test(text)) return;
+    setForm(f => ({ ...f, price: text.replace(/^0+(?=d)/, '') }));
+  }
+
+  function stepPrice(delta: number) {
+    setForm(f => {
+      const next = Math.max(0, (parseFloat(f.price) || 0) + delta);
+      return { ...f, price: String(Math.round(next * 100) / 100) };
+    });
+  }
+
   async function saveProdus() {
-    if (!form.name.trim() || !form.category.trim()) return;
+    if (!form.name.trim() || !form.category.trim() || !pretValid) return;
+    const produs = { ...form, price: parseFloat(form.price) };
     setSavingProd(true);
     if (modal === 'add') {
-      const res = await adminFetch('/api/produse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+      const res = await adminFetch('/api/produse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(produs) });
       const json = await res.json();
       if (json.data?.[0]) setProduse(prev => [...prev, json.data[0]]);
     } else if (modal && typeof modal === 'object') {
       const produsModal = modal as Produs;
-      await adminFetch('/api/produse', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: produsModal.id, ...form }) });
-      setProduse(prev => prev.map(p => p.id === produsModal.id ? { ...p, ...form } : p));
+      await adminFetch('/api/produse', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: produsModal.id, ...produs }) });
+      setProduse(prev => prev.map(p => p.id === produsModal.id ? { ...p, ...produs } : p));
     }
     setSavingProd(false);
     setModal(null);
@@ -405,12 +424,12 @@ export default function AdminPage() {
       {/* Modal produs */}
       {modal !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="bg-[#FDF6EC] border border-[#D4B896] rounded-2xl w-full max-w-lg shadow-xl">
-            <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-[#D4B896]">
-              <h2 className="font-dm-serif text-xl text-[#3B2507]">{modal === 'add' ? 'Produs nou' : 'Editează produs'}</h2>
+          <div className="flex flex-col max-h-[calc(100dvh-2rem)] bg-[#FDF6EC] border border-[#D4B896] rounded-2xl w-full max-w-lg shadow-xl">
+            <div className="shrink-0 flex items-center justify-between px-6 pt-5 pb-4 border-b border-[#D4B896]">
+              <h2 className="font-dm-serif text-xl! text-[#3B2507]">{modal === 'add' ? 'Produs nou' : 'Editează produs'}</h2>
               <button onClick={() => setModal(null)} className="text-[#B89878] hover:text-[#3B2507] transition-colors"><IconX /></button>
             </div>
-            <div className="px-6 py-4 space-y-3 max-h-[70vh] overflow-y-auto">
+            <div className="flex-1 min-h-0 px-6 py-4 space-y-3 overflow-y-auto">
               <div>
                 <label className="block text-[#3B2507] text-xs font-semibold mb-1">Nume *</label>
                 <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
@@ -425,9 +444,15 @@ export default function AdminPage() {
               </div>
               <div>
                 <label className="block text-[#3B2507] text-xs font-semibold mb-1">Preț (lei) *</label>
-                <input type="number" min="0" step="0.5" value={form.price}
-                  onChange={e => setForm(f => ({ ...f, price: parseFloat(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 rounded-lg bg-white border-2 border-[#D4B896] text-[#3B2507] focus:outline-none focus:border-[#3B2507] text-sm transition-all" />
+                <div className="flex items-center gap-2">
+                  <button type="button" onClick={() => stepPrice(-1)} aria-label="Scade prețul cu 1 leu"
+                    className="w-11 h-11 shrink-0 rounded-lg bg-[#EDD9AF] border-2 border-[#D4B896] text-[#3B2507] text-xl font-bold active:bg-[#D4B896] transition-all">−</button>
+                  <input type="text" inputMode="decimal" placeholder="0" value={form.price}
+                    onChange={e => handlePriceChange(e.target.value)}
+                    className="flex-1 min-w-0 h-11 px-3 text-center rounded-lg bg-white border-2 border-[#D4B896] text-[#3B2507] focus:outline-none focus:border-[#3B2507] text-sm transition-all" />
+                  <button type="button" onClick={() => stepPrice(1)} aria-label="Crește prețul cu 1 leu"
+                    className="w-11 h-11 shrink-0 rounded-lg bg-[#EDD9AF] border-2 border-[#D4B896] text-[#3B2507] text-xl font-bold active:bg-[#D4B896] transition-all">+</button>
+                </div>
               </div>
               <div>
                 <label className="block text-[#3B2507] text-xs font-semibold mb-1">Descriere</label>
@@ -476,8 +501,8 @@ export default function AdminPage() {
                 <span className="text-[#3B2507] text-sm font-medium">Produs vegan</span>
               </label>
             </div>
-            <div className="flex gap-2 px-6 py-4 border-t border-[#D4B896]">
-              <button onClick={saveProdus} disabled={savingProd || !form.name.trim() || !form.category.trim()}
+            <div className="shrink-0 flex gap-2 px-6 py-4 border-t border-[#D4B896]">
+              <button onClick={saveProdus} disabled={savingProd || !form.name.trim() || !form.category.trim() || !pretValid}
                 className="flex-1 py-2 bg-[#3B2507] hover:bg-[#1E1200] disabled:opacity-50 text-[#F5E6C8] text-sm font-semibold rounded-xl transition-all">
                 {savingProd ? 'Se salvează...' : 'Salvează'}
               </button>
