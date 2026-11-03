@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { createCalendarToken, isValidCalendarToken } from '@/lib/calendarToken';
 
 const BRUN = '#2C1810';
 const CREM = '#F5E6C8';
@@ -18,16 +19,21 @@ function formatDataOra(dataOraStr: string) {
 
 export default async function CalendarPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ t?: string | string[] }>;
 }) {
   const { id } = await params;
+  const { t } = await searchParams;
 
-  const { data } = await supabaseAdmin
-    .from('rezervari')
-    .select('nume, data_ora, nr_persoane')
-    .eq('id', id)
-    .single();
+  const { data } = isValidCalendarToken(id, t)
+    ? await supabaseAdmin
+        .from('rezervari')
+        .select('data_ora, nr_persoane')
+        .eq('id', id)
+        .single()
+    : { data: null };
 
   if (!data) {
     return (
@@ -60,7 +66,7 @@ export default async function CalendarPage({
     `&body=${encodeURIComponent(description)}` +
     `&location=${encodeURIComponent(location)}`;
 
-  const icsUrl = `/api/calendar/${id}`;
+  const icsUrl = `/api/calendar/${id}?t=${createCalendarToken(id)}`;
 
   const options = [
     {

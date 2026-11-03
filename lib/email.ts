@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { createCalendarToken } from '@/lib/calendarToken';
 
 const FROM = process.env.GMAIL_FROM ?? 'Vibe Caffè <ss.tornea@gmail.com>';
 const BASE_URL = 'https://vibe-website-pied.vercel.app';
@@ -158,7 +159,7 @@ export async function trimiteEmailStatus({
 
   if (status === 'confirmată') {
     mesajExtra = `<p style="margin:0;color:${BRUN_TEXT};font-size:15px;line-height:1.6">Te așteptăm cu drag la Vibe Caffè.</p>`;
-    butoane = btn('Adaugă în calendar', `${BASE_URL}/calendar/${id}`);
+    butoane = btn('Adaugă în calendar', `${BASE_URL}/calendar/${id}?t=${createCalendarToken(String(id))}`);
   } else if (status === 'respinsă') {
     mesajExtra = `<p style="margin:0;color:#8B1A1A;font-size:15px;line-height:1.6">Te rugăm să alegi o altă dată/oră.</p>`;
     butoane = btn('Fă o altă rezervare', `${BASE_URL}/rezervari`);

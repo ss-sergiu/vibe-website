@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { isValidCalendarToken } from '@/lib/calendarToken';
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
 
+  if (!isValidCalendarToken(id, request.nextUrl.searchParams.get('t'))) {
+    return NextResponse.json({ error: 'Rezervarea nu a fost găsită.' }, { status: 404 });
+  }
+
   const { data, error } = await supabaseAdmin
     .from('rezervari')
-    .select('nume, data_ora, nr_persoane')
+    .select('data_ora, nr_persoane')
     .eq('id', id)
     .single();
 

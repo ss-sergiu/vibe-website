@@ -6,6 +6,7 @@ import {
   isAdmin,
   verifyPassword,
 } from '@/lib/adminAuth';
+import { clearLoginAttempts, loginAttemptKey, registerLoginAttempt } from '@/lib/loginRateLimit';
 
 export async function GET() {
   return NextResponse.json({ ok: await isAdmin() });
@@ -13,10 +14,22 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   const { password } = await request.json();
+  const key = loginAttemptKey(request);
+
+  try {
+    if (!(await registerLoginAttempt(key))) {
+      return NextResponse.json({ ok: false }, { status: 429 });
+    }
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ ok: false }, { status: 503 });
+  }
 
   if (!verifyPassword(password)) {
     return NextResponse.json({ ok: false }, { status: 401 });
   }
+
+  await clearLoginAttempts(key);
 
   const response = NextResponse.json({ ok: true });
   response.cookies.set(ADMIN_COOKIE, createSessionToken(), {
