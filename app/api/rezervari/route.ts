@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { trimiteEmailRezervare, trimiteEmailAdmin } from '@/lib/email';
 
 export async function GET() {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('rezervari')
     .select('*')
     .order('created_at', { ascending: false });
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('rezervari')
     .insert({ nume, email, telefon, nr_persoane: nr_persoane ?? 2, data_ora })
     .select()

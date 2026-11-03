@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export async function GET() {
   try {
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Câmpurile name, category și price sunt obligatorii.' }, { status: 400 });
     }
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
       .from('produse')
       .insert([{ name, category, price: Number(price), description: description ?? '', ingredients: ingredients ?? '', image: image ?? '', vegan: Boolean(vegan), sort_order: 0 }])
       .select();
@@ -55,7 +56,7 @@ export async function PATCH(request: NextRequest) {
     if (fields.image !== undefined) update.image = fields.image;
     if (fields.vegan !== undefined) update.vegan = Boolean(fields.vegan);
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
       .from('produse')
       .update(update)
       .eq('id', Number(id))
@@ -76,7 +77,7 @@ export async function DELETE(request: NextRequest) {
 
     if (!id) return NextResponse.json({ error: 'ID obligatoriu.' }, { status: 400 });
 
-      const { error } = await supabase
+      const { error } = await supabaseAdmin
       .from('produse')
       .delete()
       .eq('id', Number(id));

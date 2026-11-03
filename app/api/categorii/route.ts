@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export async function GET() {
   const { data, error } = await supabase
@@ -19,7 +20,7 @@ export async function PATCH(request: NextRequest) {
   if (name !== undefined) update.name = name;
   if (sort_order !== undefined) update.sort_order = sort_order;
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('categorii')
     .update(update)
     .eq('id', id)
@@ -33,10 +34,10 @@ export async function POST(request: NextRequest) {
   const { name } = body;
   if (!name) return NextResponse.json({ error: 'Nume obligatoriu.' }, { status: 400 });
 
-  const { data: existing } = await supabase.from('categorii').select('sort_order').order('sort_order', { ascending: false }).limit(1);
+  const { data: existing } = await supabaseAdmin.from('categorii').select('sort_order').order('sort_order', { ascending: false }).limit(1);
   const maxOrder = existing?.[0]?.sort_order ?? 0;
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('categorii')
     .insert({ name, sort_order: maxOrder + 1 })
     .select();
@@ -49,7 +50,7 @@ export async function DELETE(request: NextRequest) {
   const id = searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'ID obligatoriu.' }, { status: 400 });
 
-  const { error } = await supabase.from('categorii').delete().eq('id', Number(id));
+  const { error } = await supabaseAdmin.from('categorii').delete().eq('id', Number(id));
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ message: 'Categorie ștearsă.' }, { status: 200 });
 }
