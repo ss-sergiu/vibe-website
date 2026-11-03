@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/adminAuth';
 
 export async function POST(request: NextRequest) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
+
   const { url } = await request.json();
   if (!url) return NextResponse.json({ error: 'URL lipsă.' }, { status: 400 });
 

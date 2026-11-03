@@ -91,6 +91,7 @@ function IconDoor() {
 
 export default function AdminPage() {
   const [autentificat, setAutentificat] = useState(false);
+  const [verificareAuth, setVerificareAuth] = useState(true);
   const [parola, setParola] = useState('');
   const [eroareAuth, setEroareAuth] = useState('');
   const [loadingAuth, setLoadingAuth] = useState(false);
@@ -143,7 +144,11 @@ export default function AdminPage() {
   const [addingCat, setAddingCat] = useState(false);
 
   useEffect(() => {
-    if (sessionStorage.getItem('adminOk') === '1') setAutentificat(true);
+    fetch('/api/admin/auth')
+      .then(res => res.json())
+      .then(json => setAutentificat(json.ok === true))
+      .catch(() => setAutentificat(false))
+      .finally(() => setVerificareAuth(false));
   }, []);
 
   async function login(e: React.FormEvent) {
@@ -155,22 +160,32 @@ export default function AdminPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: parola }),
     });
-    if (res.ok) { sessionStorage.setItem('adminOk', '1'); setAutentificat(true); }
+    if (res.ok) { setAutentificat(true); }
     else setEroareAuth('Parolă incorectă.');
     setLoadingAuth(false);
   }
 
-  function logout() { sessionStorage.removeItem('adminOk'); setAutentificat(false); }
+  async function logout() {
+    await fetch('/api/admin/auth', { method: 'DELETE' });
+    setAutentificat(false);
+  }
+
+  // Sesiune expirată: revine la ecranul de login
+  const adminFetch = useCallback(async (url: string, init?: RequestInit) => {
+    const res = await fetch(url, init);
+    if (res.status === 401) setAutentificat(false);
+    return res;
+  }, []);
 
   // ─── Rezervări ────────────────────────────────────────────────────────────
 
   const fetchRezervari = useCallback(async () => {
     setLoadingRez(true);
-    const res = await fetch('/api/rezervari');
+    const res = await adminFetch('/api/rezervari');
     const json = await res.json();
     setRezervari(json.rezervari ?? json.data ?? []);
     setLoadingRez(false);
-  }, []);
+  }, [adminFetch]);
 
   useEffect(() => { if (autentificat) fetchRezervari(); }, [autentificat, fetchRezervari]);
 
@@ -182,13 +197,13 @@ export default function AdminPage() {
     if (status === 'confirmată') vibrate(50);
     else if (status === 'respinsă') vibrate([40, 30, 40]);
     else vibrate(30);
-    await fetch(`/api/rezervari/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+    await adminFetch(`/api/rezervari/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
     setRezervari(prev => prev.map(r => r.id === id ? { ...r, status } : r));
   }
 
   async function deleteRezervare(id: number) {
     vibrate([60, 40, 60]);
-    await fetch(`/api/rezervari/${id}`, { method: 'DELETE' });
+    await adminFetch(`/api/rezervari/${id}`, { method: 'DELETE' });
     setRezervari(prev => prev.filter(r => r.id !== id));
   }
 
@@ -270,7 +285,7 @@ export default function AdminPage() {
     setUploadingImg(true);
     const fd = new FormData();
     fd.append('file', file);
-    const res = await fetch('/api/upload', { method: 'POST', body: fd });
+    const res = await adminFetch('/api/upload', { method: 'POST', body: fd });
     const json = await res.json();
     if (json.url) setForm(f => ({ ...f, image: json.url }));
     setUploadingImg(false);
@@ -278,7 +293,7 @@ export default function AdminPage() {
 
   async function resolveUnsplash() {
     setUploadingImg(true);
-    const res = await fetch('/api/unsplash', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: form.image }) });
+    const res = await adminFetch('/api/unsplash', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: form.image }) });
     const json = await res.json();
     if (json.url) setForm(f => ({ ...f, image: json.url }));
     setUploadingImg(false);
@@ -290,12 +305,12 @@ export default function AdminPage() {
     if (!form.name.trim() || !form.category.trim()) return;
     setSavingProd(true);
     if (modal === 'add') {
-      const res = await fetch('/api/produse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+      const res = await adminFetch('/api/produse', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
       const json = await res.json();
       if (json.data?.[0]) setProduse(prev => [...prev, json.data[0]]);
     } else if (modal && typeof modal === 'object') {
       const produsModal = modal as Produs;
-      await fetch('/api/produse', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: produsModal.id, ...form }) });
+      await adminFetch('/api/produse', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: produsModal.id, ...form }) });
       setProduse(prev => prev.map(p => p.id === produsModal.id ? { ...p, ...form } : p));
     }
     setSavingProd(false);
@@ -304,7 +319,7 @@ export default function AdminPage() {
 
   async function deleteProdus(id: number) {
     setDeletingProdId(id);
-    await fetch(`/api/produse?id=${id}`, { method: 'DELETE' });
+    await adminFetch(`/api/produse?id=${id}`, { method: 'DELETE' });
     setProduse(prev => prev.filter(p => p.id !== id));
     setDeletingProdId(null);
     setConfirmDeleteProd(null);
@@ -314,9 +329,9 @@ export default function AdminPage() {
     if (!newName.trim() || newName === oldName) { setRenameCat(null); return; }
     setSavingCat(true);
     await Promise.all([
-      fetch('/api/categorii', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: catId, name: newName }) }),
+      adminFetch('/api/categorii', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: catId, name: newName }) }),
       ...produse.filter(p => p.category === oldName).map(p =>
-        fetch('/api/produse', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: p.id, category: newName }) })
+        adminFetch('/api/produse', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: p.id, category: newName }) })
       ),
     ]);
     setCategoriiDB(prev => prev.map(c => c.id === catId ? { ...c, name: newName } : c));
@@ -337,15 +352,15 @@ export default function AdminPage() {
     }).sort((x, y) => x.sort_order - y.sort_order);
     setCategoriiDB(updated);
     await Promise.all([
-      fetch('/api/categorii', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: a.id, sort_order: b.sort_order }) }),
-      fetch('/api/categorii', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: b.id, sort_order: a.sort_order }) }),
+      adminFetch('/api/categorii', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: a.id, sort_order: b.sort_order }) }),
+      adminFetch('/api/categorii', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: b.id, sort_order: a.sort_order }) }),
     ]);
   }
 
   async function addCategorie() {
     if (!newCatName.trim()) return;
     setAddingCat(true);
-    const res = await fetch('/api/categorii', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newCatName.trim() }) });
+    const res = await adminFetch('/api/categorii', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newCatName.trim() }) });
     const json = await res.json();
     if (json.data?.[0]) setCategoriiDB(prev => [...prev, json.data[0]]);
     setNewCatName('');
@@ -353,11 +368,13 @@ export default function AdminPage() {
   }
 
   async function deleteCategorie(id: number) {
-    await fetch(`/api/categorii?id=${id}`, { method: 'DELETE' });
+    await adminFetch(`/api/categorii?id=${id}`, { method: 'DELETE' });
     setCategoriiDB(prev => prev.filter(c => c.id !== id));
   }
 
   // ─── Login ────────────────────────────────────────────────────────────────
+
+  if (verificareAuth) return null;
 
   if (!autentificat) {
     return (
